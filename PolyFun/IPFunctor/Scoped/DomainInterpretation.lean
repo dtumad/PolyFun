@@ -18,7 +18,8 @@ so every such algebra is natural in the context: renaming and substitution have
 uniform semantic laws, and a constructor may take a least fixed point of an argument.
 
 Two interpretations that send related arguments to related results give related
-meanings for every term (`Term.denoteDomain_related`). The second interpretation is
+meanings for every term, in environments related by `ScopedEnv.Forall₂`
+(`Term.denoteDomain_related`). The second interpretation is
 an ordinary `Interpretation`, for example a total evaluator on a fragment, so one
 constructor-local check relates a lazy semantics to its native counterpart.
 -/
@@ -49,7 +50,7 @@ namespace DomainInterpretation
 
 @[simp] theorem under_apply {Ξ : List S} {b : S} (f : ScopedDomain.Env D (Ξ ++ Γ) →𝒄 D b)
     (η : ScopedDomain.Env D Γ) (ξ : ScopedDomain.Env D Ξ) :
-    under f η ξ = f (ScopedDomain.Env.append ξ η) := rfl
+    under f η ξ = f (ScopedEnv.append ξ η) := rfl
 
 end DomainInterpretation
 
@@ -81,7 +82,7 @@ namespace Term
 theorem denoteDomain_rename (alg : DomainInterpretation σ D) {a : S} (t : σ.Term Γ a)
     (ρ : Renaming Γ Δ) (η : ScopedDomain.Env D Δ) :
     (t.rename ρ).denoteDomain alg η =
-      t.denoteDomain alg (ScopedDomain.Env.rename ρ η) := by
+      t.denoteDomain alg (ScopedEnv.rename ρ η) := by
   induction t using Term.inductionOn generalizing Δ with
   | hvar Γ a x => rfl
   | hnode Γ a op args ih =>
@@ -89,7 +90,7 @@ theorem denoteDomain_rename (alg : DomainInterpretation σ D) {a : S} (t : σ.Te
     congr 1
     funext p
     ext ξ
-    simp only [under_apply, ih p, ScopedDomain.Env.rename_append]
+    simp only [under_apply, ih p, ScopedEnv.rename_append]
 
 /-- Interpret every substitution image in the same environment. -/
 @[expose] noncomputable def substitutionEnvDomain (alg : DomainInterpretation σ D)
@@ -99,8 +100,8 @@ theorem denoteDomain_rename (alg : DomainInterpretation σ D) {a : S} (t : σ.Te
 theorem substitutionEnvDomain_liftMany (alg : DomainInterpretation σ D)
     (θ : σ.Substitution Γ Δ) (Ξ : List S) (ξ : ScopedDomain.Env D Ξ)
     (η : ScopedDomain.Env D Δ) :
-    substitutionEnvDomain alg (Substitution.liftMany θ Ξ) (ScopedDomain.Env.append ξ η) =
-      ScopedDomain.Env.append ξ (substitutionEnvDomain alg θ η) := by
+    substitutionEnvDomain alg (Substitution.liftMany θ Ξ) (ScopedEnv.append ξ η) =
+      ScopedEnv.append ξ (substitutionEnvDomain alg θ η) := by
   induction Ξ with
   | nil => rfl
   | cons b Ξ ih =>
@@ -129,7 +130,7 @@ theorem denoteDomain_subst (alg : DomainInterpretation σ D) {a : S} (t : σ.Ter
 theorem denoteDomain_substOne (alg : DomainInterpretation σ D) {a b : S}
     (body : σ.Term (a :: Γ) b) (value : σ.Term Γ a) (η : ScopedDomain.Env D Γ) :
     (body.substOne value).denoteDomain alg η =
-      body.denoteDomain alg (ScopedDomain.Env.cons (value.denoteDomain alg η) η) := by
+      body.denoteDomain alg (ScopedEnv.cons (value.denoteDomain alg η) η) := by
   rw [substOne, denoteDomain_subst]
   congr 1
   funext c x
@@ -143,43 +144,25 @@ section Related
 
 variable {V : S → Type z'}
 
-/-- A continuous and an ordinary environment related at every binding position. -/
-@[expose] def EnvRelated (R : ∀ a, D a → V a → Prop) (η : ScopedDomain.Env D Γ)
-    (ζ : Env V Γ) : Prop :=
-  ∀ a (x : ScopedVar Γ a), R a (η a x) (ζ x)
-
-/-- Related blocks of fresh bindings extend related environments. -/
-theorem EnvRelated.append {R : ∀ a, D a → V a → Prop} {Ξ : List S}
-    {ξ : ScopedDomain.Env D Ξ} {ξ' : Env V Ξ} {η : ScopedDomain.Env D Γ} {ζ : Env V Γ}
-    (hξ : EnvRelated R ξ ξ') (hη : EnvRelated R η ζ) :
-    EnvRelated R (ScopedDomain.Env.append ξ η) (Env.append ξ' ζ) := by
-  induction Ξ with
-  | nil => exact hη
-  | cons b Ξ ih =>
-    intro a x
-    cases x with
-    | zero => exact hξ b .zero
-    | succ x => exact ih (fun c y => hξ c (.succ y)) a x
-
 /-- A continuous algebra simulated by an ordinary one: related arguments give related
 results at every constructor. -/
 @[expose] def DomainInterpretation.Related (R : ∀ a, D a → V a → Prop)
     (alg : DomainInterpretation σ D) (alg' : Interpretation σ V) : Prop :=
   ∀ {a} (op : σ.Op a)
     (k : (p : σ.Arg op) → ScopedDomain.Env D (σ.binders op p) →𝒄 D (σ.sort op p))
-    (k' : (p : σ.Arg op) → Env V (σ.binders op p) → V (σ.sort op p)),
-    (∀ p ξ ξ', EnvRelated R ξ ξ' → R _ (k p ξ) (k' p ξ')) → R a (alg op k) (alg' op k')
+    (k' : (p : σ.Arg op) → ScopedEnv V (σ.binders op p) → V (σ.sort op p)),
+    (∀ p ξ ξ', ScopedEnv.Forall₂ R ξ ξ' → R _ (k p ξ) (k' p ξ')) → R a (alg op k) (alg' op k')
 
 /-- The fundamental lemma: constructor-local relatedness gives related meanings. -/
 theorem Term.denoteDomain_related {R : ∀ a, D a → V a → Prop}
     {alg : DomainInterpretation σ D} {alg' : Interpretation σ V}
     (h : DomainInterpretation.Related R alg alg') {a : S} (t : σ.Term Γ a)
-    {η : ScopedDomain.Env D Γ} {ζ : Env V Γ} (hη : EnvRelated R η ζ) :
+    {η : ScopedDomain.Env D Γ} {ζ : ScopedEnv V Γ} (hη : ScopedEnv.Forall₂ R η ζ) :
     R a (t.denoteDomain alg η) (t.denote alg' ζ) := by
   induction t using Term.inductionOn with
   | hvar Γ a x => exact hη a x
   | hnode Γ a op args ih =>
-    exact h op _ _ (fun p ξ ξ' hξ => ih p (EnvRelated.append hξ hη))
+    exact h op _ _ (fun p ξ ξ' hξ => ih p (ScopedEnv.Forall₂.append hξ hη))
 
 end Related
 
