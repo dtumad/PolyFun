@@ -7,6 +7,7 @@ Authors: Devon Tuma
 module
 
 public import Mathlib.Data.Sum.Basic
+public import Mathlib.Logic.Relation
 
 /-!
 # Deterministic transitions with exact residual states
@@ -16,6 +17,11 @@ the transition function consumes one unit of fuel, including the call reporting
 termination. Exhausted fuel retains the exact state and is not an error or a
 claim of divergence. Result types, including any language-specific errors, are
 parameters of this interface.
+
+`Transition.Follows next step halted` says that `next` is the function form of a
+deterministic small-step relation `step` whose normal forms are the `halted` states,
+the way CSLib states small-step semantics. Its executions are then exactly the
+`step`-paths to a halted state (`Follows.executes_iff`).
 -/
 
 public section
@@ -118,6 +124,65 @@ theorem Executes.meaning {D : Type*} (stateMeaning : S → D) (resultMeaning : R
       have he : stateMeaning state = stateMeaning state' := by
         simpa [hs] using preserve state
       exact he.trans ih
+
+/-! ## Small-step relations -/
+
+/-- `next` is the function form of the deterministic relation `step`. A halted state returns
+itself, and is a normal form of `step`; any other state continues to its unique successor. -/
+structure Follows (next : Transition S S) (step : S → S → Prop) (halted : S → Prop) : Prop where
+  /-- A halted state returns itself. -/
+  halt : ∀ state, halted state → next state = .inl state
+  /-- Any other state continues to a successor under `step`. -/
+  advance : ∀ state, ¬ halted state → ∃ state', next state = .inr state' ∧ step state state'
+  /-- Halted states have no successor. -/
+  normal : ∀ state state', halted state → ¬ step state state'
+  /-- Successors are unique. -/
+  unique : ∀ {state left right}, step state left → step state right → left = right
+
+namespace Follows
+
+variable {next : Transition S S} {step : S → S → Prop} {halted : S → Prop}
+
+/-- A returned state is the halted state itself. -/
+theorem halted_of_eq_inl (h : Follows next step halted) {state result : S}
+    (hs : next state = .inl result) : halted state ∧ result = state := by
+  by_cases hh : halted state
+  · exact ⟨hh, Sum.inl.inj (hs.symm.trans (h.halt state hh))⟩
+  · obtain ⟨_, hs', _⟩ := h.advance state hh
+    cases hs.symm.trans hs'
+
+/-- A continuing transition is a `step`. -/
+theorem step_of_eq_inr (h : Follows next step halted) {state state' : S}
+    (hs : next state = .inr state') : step state state' := by
+  by_cases hh : halted state
+  · cases hs.symm.trans (h.halt state hh)
+  · obtain ⟨_, hs', hstep⟩ := h.advance state hh
+    exact Sum.inr.inj (hs'.symm.trans hs) ▸ hstep
+
+/-- Executions are exactly the `step`-paths that end in a halted state. -/
+theorem executes_iff (h : Follows next step halted) {state result : S} :
+    Executes next state result ↔ Relation.ReflTransGen step state result ∧ halted result := by
+  constructor
+  · intro hex
+    induction hex with
+    | done hs =>
+        obtain ⟨hh, rfl⟩ := h.halted_of_eq_inl hs
+        exact ⟨.refl, hh⟩
+    | next hs _ ih => exact ⟨.head (h.step_of_eq_inr hs) ih.1, ih.2⟩
+  · rintro ⟨hpath, hh⟩
+    induction hpath using Relation.ReflTransGen.head_induction_on with
+    | refl => exact .done (h.halt _ hh)
+    | head hstep _ ih =>
+        have hnot : ¬ halted _ := fun hh' => h.normal _ _ hh' hstep
+        obtain ⟨_, hs, hstep'⟩ := h.advance _ hnot
+        exact .next hs (h.unique hstep' hstep ▸ ih)
+
+/-- A `step`-path to a halted state is found by some finite transition budget. -/
+theorem terminates_iff (h : Follows next step halted) {state result : S} :
+    Terminates next state result ↔ Relation.ReflTransGen step state result ∧ halted result := by
+  rw [← executes_iff_terminates, h.executes_iff]
+
+end Follows
 
 end Transition
 end Control
