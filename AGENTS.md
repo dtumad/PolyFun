@@ -28,27 +28,11 @@ to inspect the environment checks.
 
 ## Source map and dependency direction
 
-The canonical [repository map](docs/reference/repo-map.md#conceptual-layering)
-records module layering. Update it when adding a module or changing an import
-boundary. Imports flow downward and must remain acyclic.
-
-| Root | Responsibility |
-|---|---|
-| `PolyFun/PFunctor/` | Polynomial operations, lenses/charts, free/cofree structures, handlers, resumptions and dynamical systems |
-| `PolyFun/IPFunctor/` | Indexed containers, family/single-index/two-index free programs, indexed coinduction and notation |
-| `PolyFun/ITree/` | Coinductive programs with silent steps, bisimulation, handlers and traces |
-| `PolyFun/Interaction/Basic/` | `TypeTree`, decorations, syntax, strategies and sequential composition |
-| `PolyFun/Interaction/{TwoParty,Multiparty,Concurrent}/` | Roles, local views, concurrency, fairness and refinement |
-| `PolyFun/Interaction/Interface.lean` | Shared typed interfaces and directed boundaries |
-| `PolyFun/Interaction/Execution/` | Reactive/request networks, routing, budgets and assemblies |
-| `PolyFun/Interaction/Open/` | Open theory/syntax/processes, observations, contextual emulation and structural realizability bridge |
-| `PolyFun/Control/` | Monad/comonad/coalgebra infrastructure, LTS and program-logic kernel |
-| `PolyFun/Realizability/` | Represented types, admissible state machines, representation invariance and quantitative resource certificates |
-| `PolyFun/Complexity/`, `PolyFun/Logic/` | Generic resource-bound syntax and small logic helpers |
-| `ToCslib/` | Lowest production layer: upstream staging for free-monad, loop, order, bitvector and polynomial lemmas |
-| `ComplexityBackends/` | Optional concrete complexity backends, one subdirectory per machine model (`CslibSingleTape/`), outside the generic umbrella |
-| `Examples/` | Tutorials and the Parliament case study, target `PolyFunExamples` |
-| `PolyFunTest/` | Regression tests; may import tutorials, with no reverse production dependency |
+The [repository map](docs/reference/repo-map.md) is canonical: its
+[library targets](docs/reference/repo-map.md#library-targets),
+[module finder](docs/reference/repo-map.md#find-the-right-module) and
+[conceptual layering](docs/reference/repo-map.md#conceptual-layering). Update it when adding a
+module or changing an import boundary. Imports flow downward and must remain acyclic.
 
 Start with `PFunctor/Basic.lean`, `PFunctor/Free/Basic.lean`, `ITree/Basic.lean`,
 and `Interaction/Basic/{TypeTree,Decoration}.lean` under `PolyFun/`.
@@ -137,14 +121,9 @@ and [review guide](docs/development/review-hardening.md) apply to every change.
 
 ## Generated files and scripts
 
-`PolyFun.lean`, `ToCslib.lean` and `ComplexityBackends.lean` are generated; never
-hand-edit them. Stage new/deleted/renamed source files before running
-`./scripts/update-lib.sh`, `./scripts/update-lib.sh ToCslib` or
-`./scripts/update-lib.sh ComplexityBackends`. See
-[generated files](docs/development/generated-files.md).
-Tutorial modules use a glob target and need no generated umbrella. The optional
-case-study root `Examples/Parliament.lean` is generated with
-`./scripts/update-lib.sh Examples.Parliament`; stage new case-study modules first.
+Library umbrellas are generated; never hand-edit them. Stage new, deleted or renamed source
+files, then run `./scripts/update-lib.sh <library>`; [generated files](docs/development/generated-files.md)
+lists each umbrella and its command. Tutorial modules use a glob target and need no umbrella.
 Core libraries may not import examples, tests, or `PolyFunParliamentMain`.
 
 Add repository scripts only for concrete recurring workflows under
