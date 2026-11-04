@@ -49,6 +49,7 @@ public import PolyFun.IPFunctor.Chart.Basic
 public import PolyFun.IPFunctor.Equiv.Basic
 public import PolyFun.IPFunctor.Free.Basic
 public import PolyFun.IPFunctor.Free.Bound
+public import PolyFun.IPFunctor.Free.Bound.Charge
 public import PolyFun.IPFunctor.Free.Bound.Loops
 public import PolyFun.IPFunctor.Free.Bound.Reindex
 public import PolyFun.IPFunctor.Free.Bound.Substitution
@@ -73,6 +74,7 @@ public import PolyFun.ITree.Bisim.CrossSignature
 public import PolyFun.ITree.Bisim.Defs
 public import PolyFun.ITree.Bisim.Equiv
 public import PolyFun.ITree.Bisim.Iter
+public import PolyFun.ITree.Charge
 public import PolyFun.ITree.Construct
 public import PolyFun.ITree.Do
 public import PolyFun.ITree.Domain
@@ -222,6 +224,7 @@ public import PolyFun.PFunctor.Category
 public import PolyFun.PFunctor.Category.Factorization
 public import PolyFun.PFunctor.Category.MonoEpi
 public import PolyFun.PFunctor.Category.Monoidal
+public import PolyFun.PFunctor.Charge
 public import PolyFun.PFunctor.Chart.Basic
 public import PolyFun.PFunctor.Cofree
 public import PolyFun.PFunctor.Cofree.FiniteProjection
@@ -256,6 +259,7 @@ public import PolyFun.PFunctor.Dynamical.Combinators
 public import PolyFun.PFunctor.Dynamical.DynComputation
 public import PolyFun.PFunctor.Dynamical.DynComputation.Bounded
 public import PolyFun.PFunctor.Dynamical.DynComputation.BoundedFold
+public import PolyFun.PFunctor.Dynamical.DynComputation.Charge
 public import PolyFun.PFunctor.Dynamical.DynComputation.IO
 public import PolyFun.PFunctor.Dynamical.DynComputation.Resumable
 public import PolyFun.PFunctor.Dynamical.DynComputation.Termination
@@ -285,6 +289,9 @@ public import PolyFun.PFunctor.Dynamical.Trajectory
 public import PolyFun.PFunctor.Equiv.Basic
 public import PolyFun.PFunctor.Equiv.Special
 public import PolyFun.PFunctor.Free.Basic
+public import PolyFun.PFunctor.Free.Cost
+public import PolyFun.PFunctor.Free.Cost.Loops
+public import PolyFun.PFunctor.Free.Cost.Tactic
 public import PolyFun.PFunctor.Free.Cursor
 public import PolyFun.PFunctor.Free.Cursor.Append
 public import PolyFun.PFunctor.Free.Cursor.Fork
@@ -302,6 +309,7 @@ public import PolyFun.PFunctor.Free.HandlerMachine
 public import PolyFun.PFunctor.Free.Parallel
 public import PolyFun.PFunctor.Free.Path
 public import PolyFun.PFunctor.Free.Path.Bounded
+public import PolyFun.PFunctor.Free.Path.Charge
 public import PolyFun.PFunctor.Free.Path.Execution
 public import PolyFun.PFunctor.Free.Polynomial
 public import PolyFun.PFunctor.Free.Replicate
@@ -313,6 +321,7 @@ public import PolyFun.PFunctor.Free.WP
 public import PolyFun.PFunctor.Free.WP.Charge
 public import PolyFun.PFunctor.Free.WP.Upstream
 public import PolyFun.PFunctor.Handler
+public import PolyFun.PFunctor.Handler.Charge
 public import PolyFun.PFunctor.Handler.Free
 public import PolyFun.PFunctor.Handler.Instrumentation
 public import PolyFun.PFunctor.Handler.Instrumentation.Free
@@ -351,6 +360,7 @@ public import PolyFun.PFunctor.PatternRunsOnMatter.Operational
 public import PolyFun.PFunctor.PatternRunsOnMatter.Parallel
 public import PolyFun.PFunctor.PatternRunsOnMatter.Universal
 public import PolyFun.PFunctor.Resumption
+public import PolyFun.PFunctor.Resumption.Charge
 public import PolyFun.PFunctor.Resumption.Domain
 public import PolyFun.PFunctor.Resumption.DomainLaws
 public import PolyFun.PFunctor.Resumption.DomainTruncate

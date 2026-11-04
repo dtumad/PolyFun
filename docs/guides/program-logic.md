@@ -409,7 +409,10 @@ on core's `wp`. VCVio presents its expectation reading this way, as an
 
 ## Charges and budgets
 
-`OpSpec.charge c` (`PolyFun/PFunctor/Free/WP/Charge.lean`) reads a call at `a` as costing `c a`,
+The cost API itself (charges, `IsChargeBound`, `cost`, transport through lenses and handlers, and
+the other models) is in [interaction cost](cost.md). This section covers its program-logic side.
+
+`OpSpec.charge c` (`PolyFun/PFunctor/Free/Cost.lean`) reads a call at `a` as costing `c a`,
 followed by its worst continuation: `c a + ⨆ b, k b`. Its fold is the worst-case charge-to-go of
 a program. Subtractive per-position budgets are exactly upper bounds on that fold in `ℕ∞`
 (`isRollBound_iff_wpFold_charge`, with `isTotalRollBound_iff_wpFold_charge` for unit charges),
@@ -446,8 +449,9 @@ There are two ways to state such a bound as a core triple.
   call. With ranks that hold a bad-event indicator plus the remaining budget, it is the union
   bound over the calls. `triple_liftM_ranked` is the subtractive natural-number budget, where a
   call at `a` moves the rank from `k + c a` to `k`, and `triple_liftM_ranked_total` its
-  unit-charge case. `IsRollBound.prod` and `IsRollBound.pi` pair budgets or take a family of them,
-  and `triple_liftM_invariant` is the unranked case: a handler that preserves an assertion
+  unit-charge case. `triple_liftM_of_isChargeBound` is the same over a charge bound in any cost
+  type, with ranks indexed by the amount spent. `IsRollBound.prod` and `IsRollBound.pi` pair
+  budgets or take a family of them, and `triple_liftM_invariant` is the unranked case: a handler that preserves an assertion
   preserves it through every simulated program.
 
 `PolyFunTest/Do/Charge.lean` checks both forms on a coin interface. The ranked triple is
