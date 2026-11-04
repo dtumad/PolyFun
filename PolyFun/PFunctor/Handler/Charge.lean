@@ -6,6 +6,7 @@ Authors: Devon Tuma
 module
 
 public import PolyFun.PFunctor.Free.Cost
+public import PolyFun.PFunctor.Free.Path.Charge
 public import PolyFun.PFunctor.Handler.Free
 public import PolyFun.PFunctor.Handler.Sum
 
@@ -33,6 +34,9 @@ every possible result of a run of a program within budget `B`, the amount spent 
 (`FreeM.IsChargeBound.le_of_canReturn_run_liftM_withCharge`). This is an instance of resource
 growth (`FreeM.IsChargeBound.le_of_canReturn_run_liftM`): if each call at `a` raises a measure `f`
 of the handler state by at most `c a`, then a program within budget `B` raises it by at most `B`.
+
+`run_liftM_withCharge_id` evaluates a run through a deterministic handler: it returns the output
+and the charge of the one path that handler picks.
 
 `h.withBudget c B` refuses a call that would spend more than `B`. On a program within budget it
 never refuses (`run_liftM_withBudget_of_isChargeBound`).
@@ -108,6 +112,46 @@ theorem fst_map_run_liftM_withCharge [Monad m] [LawfulMonad m] [Add ω] (h : Han
     change Prod.fst <$> (h.withCharge c a >>= fun b => (r b).liftM (h.withCharge c)).run s =
       h a >>= fun b => (r b).liftM h
     simp [StateT.run_bind, bind_map_left, map_bind, ih]
+
+/-- **Deterministic runs.** Running a program through a handler into `Id` instrumented with a
+charge returns the output of the one path the handler picks, and adds that path's charge to the
+amount spent. With subsingleton answers this is the worst case
+(`Path.forall_charge_le_iff_ofHandler`). -/
+theorem run_liftM_withCharge_id [AddMonoid ω] (h : Handler Id P) (c : P.A → ω) {α : Type uB}
+    (x : FreeM P α) (s : ω) :
+    ((x.liftM (h.withCharge c)).run s).run =
+      (FreeM.output x (FreeM.Path.ofHandler (fun a => (h a).run) x),
+        s + FreeM.Path.charge c x (FreeM.Path.ofHandler (fun a => (h a).run) x)) := by
+  induction x using FreeM.rec generalizing s with
+  | pure a => exact (congrArg (Prod.mk a) (add_zero s)).symm
+  | liftBind a r ih =>
+    change (((r (h a).run).liftM (h.withCharge c)).run (s + c a)).run = _
+    rw [ih, add_assoc]
+    rfl
+
+/-- **Instrumenting the program itself.** Run through the identity handler instrumented with a
+charge, a program returns, on each completed path, its output together with the amount spent along
+that path. -/
+theorem supp_run_liftM_id_withCharge [AddMonoid ω] (c : P.A → ω) {α : Type uB} (x : FreeM P α)
+    (s : ω) :
+    FreeM.supp ((x.liftM ((Handler.id P).withCharge c)).run s) =
+      Set.range fun p : FreeM.Path x => (FreeM.output x p, s + FreeM.Path.charge c x p) := by
+  induction x using FreeM.rec generalizing s with
+  | pure a =>
+    ext z
+    change z = (a, s) ↔ _
+    exact ⟨fun h => ⟨⟨⟩, by rw [h]; exact congrArg (Prod.mk a) (add_zero s)⟩,
+      fun ⟨_, h⟩ => h.symm.trans (congrArg (Prod.mk a) (add_zero s))⟩
+  | liftBind a r ih =>
+    change FreeM.supp (FreeM.liftBind a fun b =>
+      ((r b).liftM ((Handler.id P).withCharge c)).run (s + c a)) = _
+    ext z
+    simp only [FreeM.supp, Set.mem_iUnion, ih, Set.mem_range]
+    constructor
+    · rintro ⟨b, p, rfl⟩
+      exact ⟨⟨b, p⟩, by rw [add_assoc]; rfl⟩
+    · rintro ⟨⟨b, p⟩, rfl⟩
+      exact ⟨b, p, by rw [add_assoc]; rfl⟩
 
 /-- Run a handler under a budget: a call at `a` that would bring the amount spent above `B`
 fails; any other call is charged and run. -/
