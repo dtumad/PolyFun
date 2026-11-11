@@ -18,7 +18,8 @@ of its second components (`Lens.bangLETensor`), and the unit `y` maps into `bang
 comonad in the sense of Katsumata (*A double category theoretic analysis of graded linear
 exponential comonads*, FoSSaCS 2018), in the form of Definition 6 of Barbarossa and Pistone
 (*Tropical mathematics and the lambda-calculus I*, arXiv:2311.15704), together with the graded
-comonad and commutative comonoid laws of `Lens/BangLE.lean`.
+comonad and commutative comonoid laws of `Lens/BangLE.lean`. Its axioms (7) and (9) are stated
+here with the unit `Lens.bangLEUnit` and the indices that make them type-check.
 
 ## Main results
 
