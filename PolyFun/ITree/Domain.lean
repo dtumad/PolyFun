@@ -7,7 +7,6 @@ Authors: Devon Tuma
 module
 
 public import PolyFun.ITree.ResumptionWithTau
-public import PolyFun.ITree.Bisim.Equiv
 public import PolyFun.PFunctor.Resumption.Domain
 
 /-!

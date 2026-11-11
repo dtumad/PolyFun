@@ -6,13 +6,8 @@ Authors: Quang Dao
 
 module
 
-public import Mathlib.Logic.Equiv.Defs
-
-public import PolyFun.Interaction.Basic.Append
-public import PolyFun.Interaction.Basic.Replicate
 public import PolyFun.Interaction.Basic.StateChain
 public import PolyFun.Interaction.TwoParty.Decoration
-public import PolyFun.Interaction.TwoParty.Role
 
 /-!
 # Role-aware refinement and bridge to `Decoration.Over`

@@ -8,7 +8,6 @@ module
 
 public import PolyFun.PFunctor.Free.Basic
 public import PolyFun.PFunctor.Handler
-public import Lean.Data.Json
 
 /-!
 # Typed terminal forms and interchangeable console handlers

@@ -5,9 +5,7 @@ Authors: Quang Dao
 -/
 module
 
-public import Mathlib.Algebra.Group.Pi.Basic
 public import Mathlib.Algebra.Group.Pi.Lemmas
-public import Mathlib.Algebra.Group.Hom.Defs
 
 /-!
 # Traces into a monoid

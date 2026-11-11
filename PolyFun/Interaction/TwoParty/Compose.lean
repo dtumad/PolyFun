@@ -8,10 +8,6 @@ module
 
 -- import all: unfolds `RoleDecoration.swap`
 import all PolyFun.Interaction.TwoParty.Decoration
-public import Mathlib.Control.Monad.Basic
-public import Mathlib.Data.Sigma.Basic
-public import PolyFun.Interaction.Basic.Append
-public import PolyFun.Interaction.Basic.Replicate
 public import PolyFun.Interaction.Basic.StateChain
 public import PolyFun.Interaction.TwoParty.Decoration
 public import PolyFun.Interaction.TwoParty.Strategy

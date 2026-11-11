@@ -6,9 +6,6 @@ Authors: Quang Dao
 
 module
 
-public import Mathlib.Order.BoundedOrder.Basic
-public import Mathlib.Order.Lattice
-
 public import PolyFun.Interaction.Basic.TypeTree
 
 /-!

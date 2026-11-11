@@ -7,8 +7,6 @@ module
 
 public import PolyFun.Control.Monad.Algebra
 public import PolyFun.Control.Monad.ExactWP
-public import ToCslib.Order.LeanOrder
-public import Std.WP
 
 /-!
 # Ordered monad algebras as exact core weakest-precondition monads

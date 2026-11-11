@@ -6,7 +6,6 @@ Authors: Quang Dao
 
 module
 
-public import PolyFun.Interaction.TwoParty.Role
 public import PolyFun.Interaction.TwoParty.Lens.Strategy
 
 /-!

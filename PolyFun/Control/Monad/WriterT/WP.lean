@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Control.Monad.Writer
 public import PolyFun.Control.Monad.ExactWP
-public import Std.WP
 
 /-!
 # `WriterT` on core's weakest-precondition stack

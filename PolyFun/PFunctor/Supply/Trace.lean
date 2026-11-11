@@ -7,7 +7,6 @@ module
 
 public import PolyFun.PFunctor.Supply
 public import PolyFun.PFunctor.Free.Path.Execution
-public import PolyFun.PFunctor.Trace
 
 /-!
 # What a run against a supply reads

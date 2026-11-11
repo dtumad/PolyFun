@@ -6,7 +6,6 @@ Authors: Quang Dao
 
 module
 
-public import PolyFun.Interaction.Basic.Node
 public import PolyFun.Interaction.Basic.StrategyOver
 
 /-!

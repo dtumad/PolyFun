@@ -5,9 +5,7 @@ Authors: Devon Tuma
 -/
 module
 
-public import PolyFun.Control.Monad.Hom.IsMonadHom
 public import PolyFun.Control.Monad.ExactWP
-public import Std.WP
 
 /-!
 # Transport of weakest preconditions along monad morphisms

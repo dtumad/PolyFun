@@ -8,8 +8,6 @@ module
 
 public import PolyFun.Interaction.Open.ActivationObservation
 public import PolyFun.Interaction.Open.EmulatesQuotient
-public import PolyFun.Interaction.Open.OpenProcessSamplerFactorization
-public import PolyFun.Interaction.Open.SamplerObservation
 public import PolyFun.Interaction.Open.ScheduledSamplerFactorization
 
 /-!

@@ -8,7 +8,6 @@ module
 
 public import PolyFun.PFunctor.Lens.Basic
 public import PolyFun.PFunctor.Trace
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!

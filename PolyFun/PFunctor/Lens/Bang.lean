@@ -8,8 +8,6 @@ module
 public import PolyFun.PFunctor.Category.Monoidal
 public import Mathlib.CategoryTheory.Monad.Basic
 public import Mathlib.CategoryTheory.Monoidal.Comon_
-public import Mathlib.Data.Multiset.Sum
-public import Mathlib.Data.Multiset.Bind
 
 /-!
 # The multiset exponential on lenses

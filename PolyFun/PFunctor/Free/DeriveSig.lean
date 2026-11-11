@@ -6,9 +6,6 @@ Authors: Bas Spitters
 
 module
 
-public import Lean.Elab.Command
-public import Cslib.Foundations.Data.PFunctor.Free
-public import PolyFun.PFunctor.Basic
 public import PolyFun.PFunctor.Free.Code
 
 /-!

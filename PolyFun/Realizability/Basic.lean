@@ -6,10 +6,8 @@ Authors: Devon Tuma
 
 module
 
-public import PolyFun.Realizability.DynSystem
 public import PolyFun.Realizability.DynSystemClosure
 public import PolyFun.Realizability.Machine
-public import PolyFun.Realizability.StepClass
 
 /-!
 # Realizability of free programs by admissible state machines

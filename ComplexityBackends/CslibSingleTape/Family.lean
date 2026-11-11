@@ -7,7 +7,6 @@ Authors: Devon Tuma
 module
 
 public import ComplexityBackends.CslibSingleTape.Description
-public import ComplexityBackends.CslibSingleTape.BasicMachines
 public import PolyFun.Realizability.Quantitative.Family
 
 /-!

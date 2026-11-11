@@ -7,8 +7,6 @@ module
 
 public import Lean.Elab.Do
 public meta import Lean.Elab.Do.Basic
-public meta import Lean.Elab.Term.TermElabM
-meta import Lean.Parser.Do
 
 /-!
 # Shared indexed `do`-notation elaboration

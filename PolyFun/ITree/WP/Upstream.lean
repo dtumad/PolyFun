@@ -5,7 +5,6 @@ Authors: Devon Tuma
 -/
 module
 
-public import PolyFun.Control.Monad.Algebra.WP
 public import PolyFun.Control.Monad.Support.WP
 public import PolyFun.ITree.WP.Bind
 public import PolyFun.ITree.WP.Support

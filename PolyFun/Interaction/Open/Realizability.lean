@@ -7,7 +7,6 @@ module
 
 public import PolyFun.Interaction.Open.OpenProcessModel
 public import PolyFun.Interaction.Open.SubTheory
-public import PolyFun.Realizability.DynSystem
 public import PolyFun.Realizability.DynSystemClosure
 
 /-!

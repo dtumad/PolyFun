@@ -6,8 +6,6 @@ Authors: Quang Dao
 
 module
 
-public import Mathlib.Data.Fintype.Basic
-
 public import PolyFun.Interaction.Basic.TypeTree
 
 /-!

@@ -7,7 +7,6 @@ module
 
 public import PolyFun.Control.Monad.Support
 public import PolyFun.Control.Monad.Algebra.WP
-public import Std.WP
 
 /-!
 # Monadic support as core weakest preconditions

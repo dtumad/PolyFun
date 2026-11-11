@@ -7,7 +7,6 @@ Authors: Quang Dao
 module
 
 public import PolyFun.PFunctor.Display.Handler
-public import PolyFun.PFunctor.Handler
 
 /-!
 # Indexed coproducts of displayed handlers

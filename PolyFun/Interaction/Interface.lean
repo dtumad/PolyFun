@@ -7,9 +7,7 @@ Authors: Quang Dao
 module
 
 public import PolyFun.PFunctor.Chart.Basic
-public import PolyFun.PFunctor.Equiv.Basic
 public import PolyFun.PFunctor.Lens.Basic
-public import Batteries.Tactic.Lint
 
 /-!
 # Typed interfaces and directed boundaries

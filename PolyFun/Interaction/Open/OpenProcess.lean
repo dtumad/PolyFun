@@ -13,7 +13,6 @@ public import PolyFun.Control.Bisimulation
 public import PolyFun.Interaction.Basic.Sampler
 public import PolyFun.Interaction.Concurrent.Process
 public import PolyFun.Interaction.Interface
-public import Batteries.Tactic.Lint
 
 /-!
 # Open concurrent processes with boundary traffic

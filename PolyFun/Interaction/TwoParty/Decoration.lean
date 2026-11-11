@@ -8,8 +8,6 @@ module
 
 -- import all: unfolds `constant`
 import all PolyFun.Interaction.Basic.MonadDecoration
-public import PolyFun.Interaction.Basic.TypeTree
-public import PolyFun.Interaction.Basic.Decoration
 public import PolyFun.Interaction.Basic.MonadDecoration
 public import PolyFun.Interaction.TwoParty.Role
 /-!

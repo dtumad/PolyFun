@@ -6,13 +6,10 @@ Authors: Quang Dao
 
 module
 
-public import PolyFun.Interaction.Basic.TypeTree
-public import PolyFun.Interaction.Basic.Decoration
 public import PolyFun.Interaction.Multiparty.Core
 public import PolyFun.PFunctor.Dynamical.Combinators
 public import PolyFun.PFunctor.Dynamical.Safety
 public import PolyFun.PFunctor.Dynamical.Trajectory
-public import Mathlib.Data.PFunctor.Univariate.M
 /-!
 # Dynamic concurrent processes
 

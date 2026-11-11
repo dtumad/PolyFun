@@ -9,7 +9,6 @@ module
 public import PolyFun.PFunctor.Handler.Certified
 public import Mathlib.Algebra.BigOperators.Pi
 public import Mathlib.Algebra.BigOperators.Ring.Finset
-public import Mathlib.Algebra.Order.Ring.Defs
 
 /-!
 # Vector charges, prices and demands

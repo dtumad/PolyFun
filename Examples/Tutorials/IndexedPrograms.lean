@@ -6,7 +6,6 @@ Authors: Devon Tuma
 
 module
 
-public import PolyFun.IPFunctor.Notation
 public import PolyFun.IPFunctor.Notation.Indexed
 public import PolyFun.IPFunctor.Notation.Deterministic
 

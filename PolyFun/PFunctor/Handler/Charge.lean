@@ -6,12 +6,9 @@ Authors: Devon Tuma
 
 module
 
-public import PolyFun.PFunctor.Free.Cost.Value
 public import PolyFun.PFunctor.Free.Path.Charge
-public import PolyFun.PFunctor.Handler.Free
 public import PolyFun.PFunctor.Handler.Instrumentation.Free
 public import PolyFun.PFunctor.Handler.Sum
-public import Mathlib.Control.Monad.Writer
 
 /-!
 # Charges through handlers

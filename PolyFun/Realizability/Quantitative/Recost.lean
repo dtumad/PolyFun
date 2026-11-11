@@ -6,7 +6,6 @@ Authors: Devon Tuma
 
 module
 
-public import PolyFun.Realizability.Quantitative.Closure
 public import PolyFun.Realizability.Quantitative.Simulation
 
 /-!

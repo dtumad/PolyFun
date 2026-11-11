@@ -8,7 +8,6 @@ module
 
 public import ComplexityBackends.CslibSingleTape.BitEncoding
 public import ToCslib.Algebra.PolynomialGrowth
-public import Mathlib.Analysis.SpecificLimits.Normed
 public import Mathlib.Data.FinEnum
 
 /-!

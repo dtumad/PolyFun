@@ -6,7 +6,6 @@ Authors: Quang Dao
 module
 
 public import Mathlib.CategoryTheory.Monad.Basic
-public import Mathlib.CategoryTheory.Products.Basic
 
 /-!
 # Relative monads

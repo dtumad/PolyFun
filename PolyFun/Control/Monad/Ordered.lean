@@ -5,7 +5,6 @@ Authors: Quang Dao
 -/
 module
 
-public import Mathlib.Order.Monotone.Defs
 public import PolyFun.Control.Monad.Algebra
 public import PolyFun.Control.Monad.Relation
 

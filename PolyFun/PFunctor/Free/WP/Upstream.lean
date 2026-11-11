@@ -6,8 +6,6 @@ Authors: Devon Tuma
 module
 
 public import PolyFun.PFunctor.Free.WP
-public import PolyFun.PFunctor.Free.Support
-public import PolyFun.Control.Monad.Algebra.WP
 public import PolyFun.Control.Monad.Support.WP
 public import PolyFun.Control.Monad.Hom.WP
 

@@ -6,14 +6,11 @@ Authors: Quang Dao, Devon Tuma
 
 module
 
-import PolyFun.Interaction.Open.Emulates
 -- import all: unfolds `OpenProcessSamplerEquiv`
 import all PolyFun.Interaction.Open.OpenProcessSamplerEquiv
 -- import all: unfolds `interleave`, `sourceDraw`, `nestedDrawLeft`
 import all PolyFun.Interaction.Open.ScheduledOpenProcessModel
-public import PolyFun.Interaction.Open.OpenProcessSamplerFactorization
 public import PolyFun.Interaction.Open.SamplerObservation
-public import PolyFun.Interaction.Open.Scheduler
 public import PolyFun.Interaction.Open.ScheduledOpenProcessModel
 
 /-!

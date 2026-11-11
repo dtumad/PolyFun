@@ -8,7 +8,6 @@ module
 
 public import PolyFun.Realizability.Quantitative.Polynomial
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
-public import Mathlib.Logic.Function.Iterate
 
 /-!
 # Polynomial bounds for bounded backend iteration

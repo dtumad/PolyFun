@@ -5,7 +5,6 @@ Authors: Quang Dao
 -/
 module
 
-public import PolyFun.PFunctor.Free.Displayed.Append
 public import PolyFun.PFunctor.Free.Replicate
 
 /-!

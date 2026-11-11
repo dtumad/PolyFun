@@ -7,7 +7,6 @@ module
 
 public import PolyFun.PFunctor.Category.Monoidal
 public import PolyFun.PFunctor.Lens.Factorization
-public import Mathlib.CategoryTheory.MorphismProperty.Factorization
 public import Mathlib.CategoryTheory.MorphismProperty.LiftingProperty
 
 /-!

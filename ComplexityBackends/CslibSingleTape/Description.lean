@@ -9,7 +9,6 @@ module
 public import ComplexityBackends.CslibSingleTape.Backend
 public import ComplexityBackends.CslibSingleTape.Counting
 public import PolyFun.Realizability.Quantitative.Counting
-public import Mathlib.Data.FinEnum
 
 /-!
 # The single-tape backend as a description measure

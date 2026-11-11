@@ -8,7 +8,6 @@ module
 
 public import PolyFun.ITree.Sim.Defs
 public import PolyFun.PFunctor.Handler
-public import PolyFun.Control.Monad.Iter
 
 /-!
 # Interpreting interaction trees into iterative monads

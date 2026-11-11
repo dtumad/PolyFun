@@ -7,7 +7,6 @@ Authors: Devon Tuma
 module
 
 public import Mathlib.Algebra.Polynomial.Eval.Defs
-public import Mathlib.Data.Finset.Sort
 public import PolyFun.Complexity.SecondOrderPolynomial
 public import PolyFun.Realizability.Quantitative.Closure
 

@@ -8,10 +8,7 @@ module
 
 -- import all: unfolds `close`, `mapBoundary`, `inlTensor`, `inrTensor`, `wireLeft`, `wireRight`
 import all PolyFun.Interaction.Open.OpenProcess
-public import PolyFun.Interaction.Open.OpenProcessFactorization
-public import PolyFun.Interaction.Open.OpenProcessModel
 public import PolyFun.Interaction.Open.OpenProcessSamplerCoherence
-public import PolyFun.Interaction.Open.OpenProcessSamplerEquiv
 
 /-!
 # Sampler-aware coherence of the open-process theory

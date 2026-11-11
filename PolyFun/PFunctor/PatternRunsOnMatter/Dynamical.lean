@@ -7,7 +7,6 @@ module
 
 public import PolyFun.PFunctor.PatternRunsOnMatter.Basic
 public import PolyFun.PFunctor.Dynamical.CofreeMate
-public import PolyFun.PFunctor.Dynamical.Simulation
 public import PolyFun.PFunctor.Dynamical.Game
 
 /-!

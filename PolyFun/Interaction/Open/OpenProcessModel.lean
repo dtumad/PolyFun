@@ -10,7 +10,6 @@ module
 import all PolyFun.Interaction.Open.OpenProcess
 public import PolyFun.Interaction.Open.OpenProcess
 public import PolyFun.Interaction.Open.OpenProcessCoherence
-public import PolyFun.Interaction.Open.OpenProcessInterleave
 public import PolyFun.Interaction.Open.OpenTheory
 
 /-!

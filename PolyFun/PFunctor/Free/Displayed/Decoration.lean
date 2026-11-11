@@ -7,7 +7,6 @@ module
 
 public import PolyFun.PFunctor.Free.Displayed
 public import PolyFun.Logic.HEq
-public import Mathlib.Logic.Equiv.Defs
 
 /-!
 # Node decorations as displayed families over `PFunctor.FreeM`

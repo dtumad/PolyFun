@@ -5,8 +5,6 @@ Authors: Devon Tuma
 -/
 module
 
-public import Mathlib.Logic.Relation
-public import Mathlib.Logic.Relator
 public import Cslib.Foundations.Semantics.LTS.Bisimulation
 
 /-!

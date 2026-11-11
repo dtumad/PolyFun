@@ -7,7 +7,6 @@ Authors: Quang Dao
 module
 
 public import PolyFun.IPFunctor.Free.Indexed
-public import Mathlib.Data.Fin.Tuple.Basic
 
 /-!
 # Sequencing a dependent tuple of two-index programs

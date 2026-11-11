@@ -9,7 +9,6 @@ public import PolyFun.PFunctor.Category
 public import PolyFun.PFunctor.InternalHom
 public import PolyFun.PFunctor.Lens.Coherence
 public import Mathlib.CategoryTheory.Monoidal.Cartesian.Basic
-public import Mathlib.CategoryTheory.Monoidal.Braided.Basic
 public import Mathlib.CategoryTheory.Monoidal.Closed.Basic
 
 /-!

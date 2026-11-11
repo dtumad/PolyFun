@@ -16,13 +16,8 @@ import all PolyFun.Interaction.Basic.StrategyOver
 import all PolyFun.Interaction.TwoParty.Decoration
 -- import all: unfolds `counterpart`, `paired`, `pairedMonadic`, `toCounterpartHom`
 import all PolyFun.Interaction.TwoParty.Syntax
-public import PolyFun.Interaction.Basic.Decoration
 public import PolyFun.Interaction.Basic.Interaction
-public import PolyFun.Interaction.Basic.MonadDecoration
 public import PolyFun.Interaction.Basic.Ownership
-public import PolyFun.Interaction.Basic.Shape
-public import PolyFun.Interaction.Basic.Syntax
-public import PolyFun.Interaction.Basic.TypeTree
 public import PolyFun.Interaction.TwoParty.Decoration
 public import PolyFun.Interaction.TwoParty.Syntax
 

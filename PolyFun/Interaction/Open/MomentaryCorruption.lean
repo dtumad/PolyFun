@@ -7,8 +7,6 @@ Authors: Quang Dao
 module
 
 public import PolyFun.Interaction.Open.CorruptionModel
-public import PolyFun.Interaction.Open.EnvAction
-public import PolyFun.Interaction.Open.EnvOpenProcess
 
 /-!
 # Momentary-corruption bookkeeping

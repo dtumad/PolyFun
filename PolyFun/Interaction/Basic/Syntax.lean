@@ -8,7 +8,6 @@ module
 
 public import PolyFun.Interaction.Basic.TypeTree
 public import PolyFun.Interaction.Basic.Node
-public import Batteries.Tactic.Lint
 
 /-!
 # Generic local syntax over interaction trees

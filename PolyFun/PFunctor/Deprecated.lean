@@ -5,9 +5,6 @@ Authors: Devon Tuma
 -/
 module
 
-public import PolyFun.PFunctor.Basic
-public import PolyFun.PFunctor.Equiv.Basic
-public import PolyFun.PFunctor.Lens.Basic
 public import PolyFun.PFunctor.Chart.Basic
 public import PolyFun.PFunctor.InternalHom
 public import PolyFun.PFunctor.Adjunctions

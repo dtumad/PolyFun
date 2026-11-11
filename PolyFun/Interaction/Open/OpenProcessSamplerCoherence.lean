@@ -13,7 +13,6 @@ import all PolyFun.Interaction.Open.OpenProcess
 -- import all: unfolds `OpenProcessSamplerEquiv`
 import all PolyFun.Interaction.Open.OpenProcessSamplerEquiv
 public import PolyFun.Interaction.Basic.Sampler
-public import PolyFun.Interaction.Open.OpenProcessCoherence
 public import PolyFun.Interaction.Open.OpenProcessFactorization
 public import PolyFun.Interaction.Open.OpenProcessSamplerEquiv
 

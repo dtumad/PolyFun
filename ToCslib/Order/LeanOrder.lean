@@ -5,7 +5,6 @@ Authors: Devon Tuma
 -/
 module
 
-public import Init.Internal.Order
 public import Mathlib.Order.CompleteLattice.Basic
 
 /-!

@@ -6,7 +6,6 @@ Authors: Quang Dao
 module
 
 public import PolyFun.Control.Comonad.Basic
-public import PolyFun.PFunctor.Equiv.Basic
 public import PolyFun.PFunctor.M.Vertex
 
 /-! # Cofree Comonads

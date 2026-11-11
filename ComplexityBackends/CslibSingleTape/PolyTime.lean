@@ -7,7 +7,6 @@ Authors: Devon Tuma
 module
 
 public import Cslib.Computability.Machines.Turing.SingleTape.Deterministic
-public import Mathlib.Algebra.Polynomial.Eval.Degree
 public import ToCslib.Algebra.Polynomial
 
 /-!

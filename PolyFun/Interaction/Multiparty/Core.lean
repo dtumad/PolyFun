@@ -8,9 +8,7 @@ module
 
 -- import all: unfolds `Action`, `bot`, `basePFunctor`
 import all PolyFun.Interaction.Multiparty.Observation
-public import PolyFun.Interaction.Basic.Decoration
 public import PolyFun.Interaction.Basic.StrategyOver
-public import PolyFun.Interaction.Basic.TypeTree
 public import PolyFun.Interaction.Multiparty.Observation
 
 /-!

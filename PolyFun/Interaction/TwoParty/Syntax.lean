@@ -6,11 +6,8 @@ Authors: Quang Dao
 
 module
 
-public import PolyFun.Interaction.Basic.Interaction
 public import PolyFun.Interaction.Basic.Ownership
-public import PolyFun.Interaction.Basic.Shape
 public import PolyFun.Interaction.TwoParty.Decoration
-public import PolyFun.Interaction.TwoParty.Role
 
 /-!
 # Two-party syntax over lens-executed trees

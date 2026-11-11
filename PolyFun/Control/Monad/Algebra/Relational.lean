@@ -5,9 +5,7 @@ Authors: Quang Dao
 -/
 module
 
-public import Mathlib.Order.CompleteLattice.Basic
 public import PolyFun.Control.Monad.Algebra.WP
-public import Std.WP
 
 /-!
 # Relational monad algebras

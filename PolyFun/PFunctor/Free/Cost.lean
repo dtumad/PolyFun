@@ -9,12 +9,9 @@ module
 public import PolyFun.PFunctor.Free.Restrict
 public import PolyFun.PFunctor.Bound
 public import Mathlib.Algebra.Order.Hom.Monoid
-public import Mathlib.Algebra.Order.Monoid.Canonical.Defs
 public import Mathlib.Algebra.Order.Pi
 public import Mathlib.Algebra.Order.Monoid.Prod
 public import Mathlib.Algebra.Order.Sub.Prod
-public import Mathlib.Algebra.Order.Monoid.Unbundled.Pow
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Data.ENat.Lattice
 public import Mathlib.Data.Nat.Cast.Order.Basic

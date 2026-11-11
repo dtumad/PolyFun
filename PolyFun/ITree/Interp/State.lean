@@ -9,7 +9,6 @@ module
 public import PolyFun.ITree.Interp.Defs
 public import PolyFun.Control.Monad.Iter.Instances
 public import PolyFun.ITree.Events.StateFacts
-public import PolyFun.ITree.Bisim.Equiv
 
 /-!
 # State events through `interp`

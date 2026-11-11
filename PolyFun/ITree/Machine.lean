@@ -7,7 +7,6 @@ module
 
 public import PolyFun.ITree.ResumptionWithTau
 public import PolyFun.PFunctor.Dynamical.DynComputation
-public import PolyFun.PFunctor.Dynamical.Trajectory
 public import PolyFun.PFunctor.Handler.Sum
 
 /-!

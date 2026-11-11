@@ -7,8 +7,6 @@ Authors: Devon Tuma
 module
 
 public import PolyFun.Realizability.Quantitative
-public import Mathlib.Data.Fintype.Card
-public import Mathlib.Data.Finset.Image
 
 /-!
 # Description measures on quantitative realizers

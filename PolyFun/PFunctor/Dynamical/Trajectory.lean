@@ -7,7 +7,6 @@ module
 
 public import PolyFun.PFunctor.Cofree
 public import PolyFun.PFunctor.Dynamical.Basic
-public import PolyFun.PFunctor.M
 
 /-!
 # Trajectories of dynamical systems

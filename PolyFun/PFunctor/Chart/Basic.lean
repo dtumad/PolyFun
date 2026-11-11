@@ -5,9 +5,7 @@ Authors: Quang Dao
 -/
 module
 
-public import PolyFun.PFunctor.Basic
 public import PolyFun.PFunctor.Equiv.Basic
-import Batteries.Tactic.Lint
 
 /-!
 # Charts between polynomial functors

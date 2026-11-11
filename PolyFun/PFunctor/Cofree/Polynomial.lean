@@ -7,7 +7,6 @@ module
 
 public import PolyFun.PFunctor.Cofree
 public import PolyFun.PFunctor.Comonoid
-public import PolyFun.PFunctor.M.Vertex
 
 /-!
 # The cofree polynomial comonoid

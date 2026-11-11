@@ -7,7 +7,6 @@ module
 
 public import PolyFun.PFunctor.Free.WP.Upstream
 public import PolyFun.PFunctor.Free.Cost.Value
-public import Mathlib.Data.ENat.Lattice
 
 /-!
 # Charges: worst-case cost as a weakest-precondition fold

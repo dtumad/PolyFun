@@ -7,7 +7,6 @@ Authors: Quang Dao
 module
 
 public import PolyFun.Interaction.Basic.BundledMonad
-public import PolyFun.Interaction.Basic.Decoration
 public import PolyFun.Interaction.Basic.Interaction
 
 /-!

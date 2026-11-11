@@ -7,7 +7,6 @@ module
 
 public import Cslib.Foundations.Data.PFunctor.Basic
 public import Mathlib.Data.PFunctor.Multivariate.Basic
-public import Mathlib.Util.Notation3
 public import PolyFun.PFunctor.Obj
 
 /-!
