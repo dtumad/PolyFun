@@ -718,7 +718,8 @@ private theorem unfoldDirection_restrict
             hom.map_compose object firstVertex mappedNext
         have hrawVertices : rawNext ≍ homNext :=
           (cast_heq _ mappedNext).trans (cast_heq _ mappedNext).symm
-        grind
+        exact hraw.trans
+          (compose_heq C object (heq_of_eq rfl) (homDirection_heq C hom rfl hrawVertices))
       have hmappedVertex :
           M.Vertex.castEquiv shapeEq (.child direction next) =
             M.Vertex.append firstVertex mappedNext := by
