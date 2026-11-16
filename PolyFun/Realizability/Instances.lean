@@ -211,8 +211,7 @@ instance : (computable.{u}).HasSum where
     have hg' : Computable g := hg
     refine Computable.of_eq (Computable.sumCasesOn Computable.id
       (hf'.comp Computable.snd).to₂ (hg'.comp Computable.snd).to₂) ?_
-    intro x
-    cases x <;> rfl
+    simp_all
 
 instance : (computable.{u}).HasOption where
   option {A} a := @Primcodable.option A a
@@ -222,8 +221,7 @@ instance : (computable.{u}).HasOption where
     have hf' : Computable f := hf
     refine Computable.of_eq
       (Computable.option_map Computable.id (hf'.comp Computable.snd).to₂) ?_
-    intro x
-    cases x <;> rfl
+    grind
   none_mem {A B} a b := by
     let : Primcodable A := a
     let : Primcodable B := b
@@ -237,8 +235,7 @@ instance : (computable.{u}).HasOption where
       (Computable.option_bind Computable.fst
         (hk'.comp (Computable.pair Computable.snd
           (Computable.snd.comp Computable.fst))).to₂) ?_
-    intro y
-    cases y.1 <;> rfl
+    simp_all
   some_mem {A} a := by
     let : Primcodable A := a
     exact Computable.option_some
@@ -411,8 +408,7 @@ abbrev ofWordClass.hasProd {W : Type u} {Q : (W → W) → Prop} {hid : Q id}
   pair_mem := by
     rintro A B D a b d f g ⟨qf, hqf, hfEq⟩ ⟨qg, hqg, hgEq⟩
     refine ⟨fun w => P.pair (qf w) (qg w), P.pair_mem hqf hqg, fun x => ?_⟩
-    change P.pair (qf (a.1 x)) (qg (a.1 x)) = P.pair (b.1 (f x)) (d.1 (g x))
-    rw [hfEq, hgEq]
+    grind
 
 /-- Sums for a word class, from a tagging scheme. -/
 abbrev ofWordClass.hasSum {W : Type u} {Q : (W → W) → Prop} {hid : Q id}
