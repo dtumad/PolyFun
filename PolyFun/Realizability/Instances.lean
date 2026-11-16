@@ -211,7 +211,8 @@ instance : (computable.{u}).HasSum where
     have hg' : Computable g := hg
     refine Computable.of_eq (Computable.sumCasesOn Computable.id
       (hf'.comp Computable.snd).to₂ (hg'.comp Computable.snd).to₂) ?_
-    simp_all
+    intro x
+    cases x <;> rfl
 
 instance : (computable.{u}).HasOption where
   option {A} a := @Primcodable.option A a
@@ -221,7 +222,8 @@ instance : (computable.{u}).HasOption where
     have hf' : Computable f := hf
     refine Computable.of_eq
       (Computable.option_map Computable.id (hf'.comp Computable.snd).to₂) ?_
-    grind
+    intro x
+    cases x <;> rfl
   none_mem {A B} a b := by
     let : Primcodable A := a
     let : Primcodable B := b
@@ -235,7 +237,8 @@ instance : (computable.{u}).HasOption where
       (Computable.option_bind Computable.fst
         (hk'.comp (Computable.pair Computable.snd
           (Computable.snd.comp Computable.fst))).to₂) ?_
-    simp_all
+    intro y
+    cases y.1 <;> rfl
   some_mem {A} a := by
     let : Primcodable A := a
     exact Computable.option_some
