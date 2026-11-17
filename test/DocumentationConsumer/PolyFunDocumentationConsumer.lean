@@ -14,6 +14,8 @@ import Examples.Tutorials.ParallelReports
 import Examples.Tutorials.VersionedRequests
 import Examples.Tutorials.UpdatePolicies
 import PolyFun.PFunctor.Handler.Sum
+import PolyFun.PFunctor.Resumption.Measure
+import PolyFun.PFunctor.Resumption.Measure.Retry
 import Examples.Tutorials.ScopedPrograms
 import Examples.Tutorials.ScopedExecution
 import Examples.Tutorials.ScopedFamily
@@ -189,3 +191,25 @@ example {Γ Δ Θ : List Examples.ScopedPrograms.Ty} {a : Examples.ScopedProgram
       e.denote Examples.ScopedPrograms.algebra
         (IPFunctor.ScopedSignature.Env.rename (IPFunctor.ScopedSignature.Env.rename ρ τ) η) := by
   rw [IPFunctor.ScopedSignature.Term.rename_rename, IPFunctor.ScopedSignature.Term.denote_rename]
+
+namespace ExpectedCostDocumentation
+
+open PFunctor PFunctor.Resumption MeasureTheory ProbabilityTheory
+open scoped ENNReal
+
+/-- Embedding a well-founded program preserves its entire joint terminal law. -/
+example {P : PFunctor} {S α : Type} [MeasurableSpace S] [MeasurableSpace α]
+    [∀ a, MeasurableSpace (P.B a)] [∀ a, Countable (P.B a)]
+    [∀ a, MeasurableSingletonClass (P.B a)] (K : KernelHandler P S) (x : FreeM P α) :
+    returnedKernel K x.toResumption = FreeM.runKernel K x := returnedKernel_toResumption K x
+
+/-- A service can update its private state on retry. The local success floor holds on the
+states where another request can actually occur. -/
+example {S : Type} [MeasurableSpace S] (K : Kernel S (Bool × S)) [IsMarkovKernel K]
+    (c : S → ℝ≥0∞) (I : S → Prop) (p C : ℝ≥0∞) (hp : p ≤ 1) (hI : Retry.Preserves K I)
+    (hsucc : ∀ s, I s → p ≤ K s {z | z.1 = true}) (hc : ∀ s, I s → c s ≤ C)
+    (s : S) (hs : I s) :
+    expectedCharge (fun _ => K) (fun _ => c) Retry.tree (fun _ _ => 0) s ≤ C / p :=
+  Retry.expectedCharge_tree_le_div hp hI hsucc hc s hs
+
+end ExpectedCostDocumentation

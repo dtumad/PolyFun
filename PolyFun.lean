@@ -137,11 +137,13 @@ public import PolyFun.ITree.Events.StateFacts
 public import PolyFun.ITree.Free
 public import PolyFun.ITree.Handler
 public import PolyFun.ITree.Interp.Defs
+public import PolyFun.ITree.Interp.Domain
 public import PolyFun.ITree.Interp.Laws
 public import PolyFun.ITree.Interp.Sim
 public import PolyFun.ITree.Interp.State
 public import PolyFun.ITree.Interp.Stateful
 public import PolyFun.ITree.Machine
+public import PolyFun.ITree.Measure
 public import PolyFun.ITree.PatternRunsOnMatter
 public import PolyFun.ITree.Rec
 public import PolyFun.ITree.Rec.Facts
@@ -387,6 +389,8 @@ public import PolyFun.PFunctor.Free.Measure.Kernel.Handler
 public import PolyFun.PFunctor.Free.Measure.Kernel.Transport
 public import PolyFun.PFunctor.Free.Measure.Lintegral
 public import PolyFun.PFunctor.Free.Measure.Path
+public import PolyFun.PFunctor.Free.Measure.StatefulExpectedCharge
+public import PolyFun.PFunctor.Free.Measure.StatefulExpectedChargePrice
 public import PolyFun.PFunctor.Free.Measure.Support
 public import PolyFun.PFunctor.Free.Measure.Uniform
 public import PolyFun.PFunctor.Free.Parallel
@@ -471,6 +475,9 @@ public import PolyFun.PFunctor.Resumption.Domain
 public import PolyFun.PFunctor.Resumption.DomainLaws
 public import PolyFun.PFunctor.Resumption.DomainTruncate
 public import PolyFun.PFunctor.Resumption.Empty
+public import PolyFun.PFunctor.Resumption.Measure
+public import PolyFun.PFunctor.Resumption.Measure.ExpectedCharge
+public import PolyFun.PFunctor.Resumption.Measure.Retry
 public import PolyFun.PFunctor.Resumption.Truncate
 public import PolyFun.PFunctor.Resumption.WellFounded
 public import PolyFun.PFunctor.Slice
