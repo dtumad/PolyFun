@@ -328,6 +328,29 @@ lens layer in `PolyFun/PFunctor/Lens/` makes dependent.
 Used in: `PolyFun/PFunctor/Lens/State.lean`,
 `PolyFun/PFunctor/Lens/Basic.lean`.
 
+## Expected-cost citations
+
+Pedro H. Azevedo de Amorim, [*Denotational Foundations for Expected Cost Analysis*](https://arxiv.org/html/2402.01009v2).
+Sections 3.3 and 5 compare terminal cost distributions, expected incurred costs, and scalar
+postexpectations.
+
+Benjamin Lucien Kaminski, Joost-Pieter Katoen, Christoph Matheja and Federico Olmedo,
+[*Weakest Precondition Reasoning for Expected Runtimes of Randomized Algorithms*](https://doi.org/10.1145/3208102),
+JACM 2018. The expected-runtime transformer and its loop rules give operational meaning to
+prefix bounds.
+
+Philipp G. Haselwarter et al., [*Tachis: Higher-Order Separation Logic with Credits for Expected Costs*](https://arxiv.org/html/2405.20083v3),
+and Janine Lohse and Deepak Garg, [*An Iris for Expected Cost Analysis*](https://arxiv.org/abs/2406.00884).
+Both develop expected-credit reasoning in separation logic.
+
+Di Wang, Jan Hoffmann and Thomas Reps, [*Expected-Cost Analysis for Probabilistic Programs and Semantics-Level Adaption of Optional Stopping Theorems*](https://arxiv.org/abs/2103.16105).
+They analyze conditions for applying optional stopping in cost proofs.
+
+Max Vistrup, Michael Sammler and Ralf Jung, [*Program Logics à la Carte*](https://maxv.dk/program_logics_a_la_carte.pdf).
+They connect logical effect handlers to operational handlers through adequacy.
+
+Used in: [Stateful expected cost](docs/guides/expected-cost.md).
+
 ## Realizability citations
 
 ### KC96 — Kapron and Cook, *A new characterization of type-2 feasibility*
