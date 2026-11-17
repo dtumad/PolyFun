@@ -6,6 +6,7 @@ Authors: Devon Tuma
 
 module
 
+import Examples.Tutorials.CouponCollector
 import Examples.Tutorials.Requests
 import Examples.Tutorials.Machines
 import Examples.Tutorials.IndexedPrograms
@@ -213,3 +214,20 @@ example {S : Type} [MeasurableSpace S] (K : Kernel S (Bool × S)) [IsMarkovKerne
   Retry.expectedCharge_tree_le_div hp hI hsucc hc s hs
 
 end ExpectedCostDocumentation
+
+namespace CouponDocumentation
+
+open PFunctor.Resumption PolyFunExamples.CouponCollector
+open scoped ENNReal
+
+/-- Starting an empty notebook, the expected draw count for two distinct coupons is three. -/
+example : expectedCharge (fresh 2) (fun _ _ => 1) (program 2) (fun _ _ => 0) () = 3 := by
+  rw [expected_draws]
+  norm_num [Finset.sum_range_succ, mul_add,
+    ENNReal.mul_inv_cancel (a := 2) (by norm_num) (by norm_num)]
+
+/-- The terminal joint law has unit mass for every finite population. -/
+example (n : ℕ) [MeasurableSpace (List (Fin n))] :
+    returnedKernel (fresh n) (program n) () Set.univ = 1 := returned_mass n
+
+end CouponDocumentation

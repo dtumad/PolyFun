@@ -19,6 +19,7 @@ lake env lean Examples/Tutorials/Requests.lean
 | [Size-indexed vectors](Tutorials/ScopedVectors.lean) | A two-level binding family over a type-level signature: checked heads, kept contexts, coercions between types of one shape with evidence `rfl`, the derived substitution laws, length-erased meanings related to a total evaluator, and certified evaluation on data at every size assignment |
 | [Interaction trees](Tutorials/InteractionTrees.lean) | A counter over state events and ticks, run by the state corecursor and through handlers |
 | [Expected retry cost](Tutorials/ExpectedRetry.lean) | Fresh and cached coins, conditional success, and a retry loop with infinite expected cost |
+| [Coupon collector](Tutorials/CouponCollector.lean) | Exact expected draws, ordered discovery, and a cached service with zero completion mass |
 | [Parallel reports](Tutorials/ParallelReports.lean) | Independent sources and explicit joint-request interpretation order |
 | [Versioned requests](Tutorials/VersionedRequests.lean) | Routed clients, retained traffic, and stale-write rejection |
 | [Update policies](Tutorials/UpdatePolicies.lean) | All-response safety, allowed answers, and why safety is not progress |

@@ -170,6 +170,103 @@ theorem expectedCharge_eq_add_lintegral [MeasurableSpace R] (tree : ITree P R)
     (fun _ _ => 0) (fun _ => measurable_const)] at e
   exact e
 
+/-- The charge is measurable in the incoming state, also for paid silent steps. -/
+theorem measurable_expectedCharge (tree : ITree P R) (ret : R → MeasurableExpectation T)
+    (tau : ℝ≥0∞ := 0) : Measurable (fun t => expectedCharge K c hc tree ret t tau) :=
+  (PFunctor.Resumption.denote ret (chargedAlgebra K c hc tau) (toResumptionWithTau tree)).2
+
+/-- Sequencing a tree substitutes the charge of its continuation at the returned state. -/
+theorem expectedCharge_bind {R' : Type*} (tree : ITree P R) (next : R → ITree P R')
+    (ret : R' → MeasurableExpectation T) (s : T) (tau : ℝ≥0∞ := 0) :
+    expectedCharge K c hc (bind tree next) ret s tau =
+      expectedCharge K c hc tree (fun r => ⟨fun t => expectedCharge K c hc (next r) ret t tau,
+        measurable_expectedCharge K c hc (next r) ret tau⟩) s tau := by
+  simp only [expectedCharge, toResumptionWithTau_bind, PFunctor.Resumption.denote_bind]
+
+section Returned
+
+variable [MeasurableSpace R]
+
+/-- With free operations and silent steps, the expected-charge transformer integrates the
+terminal observation against the joint law of returned results and final states. -/
+theorem expectedCharge_zero_eq_lintegral (tree : ITree P R)
+    (post : R × T → ℝ≥0∞) (hm : Measurable post) (s : T) :
+    expectedCharge K 0 (fun _ => measurable_const) tree
+      (fun r => ⟨fun t => post (r, t), hm.comp (measurable_const.prodMk measurable_id)⟩) s =
+      ∫⁻ z, post z ∂returnedKernel K tree s := by
+  have hz : withTauPrice (P := P) (0 : P.A → T → ℝ≥0∞) 0 = 0 := by
+    funext a
+    cases a <;> rfl
+  rw [returnedKernel, ← PFunctor.Resumption.expectedCharge_zero_eq_lintegral _ _ post hm, ← hz]
+  exact congrFun (PFunctor.Resumption.expectedCharge_eq_denote _ (withTauPrice (P := P) 0 0)
+    (measurable_withTauPrice 0 (fun _ => measurable_const) 0) _ (Function.curry post)
+    (fun _ => hm.comp (measurable_const.prodMk measurable_id))).symm s
+
+@[simp] theorem returnedKernel_pure (x : R) (s : T) :
+    returnedKernel K (ITree.pure x) s = Measure.dirac (x, s) := by
+  simp [returnedKernel]
+
+/-- A visible request samples its answer and successor state before entering the continuation. -/
+theorem returnedKernel_query (a : P.A) (next : P.B a → ITree P R) (s : T) :
+    returnedKernel K (query a next) s =
+      (K a s).bind (fun z => returnedKernel K (next z.1) z.2) := by
+  rw [returnedKernel, toResumptionWithTau_query, PFunctor.Resumption.returnedKernel_query]
+  rfl
+
+/-- A silent step preserves the whole terminal law. -/
+@[simp] theorem returnedKernel_step (tree : ITree P R) : returnedKernel K (step tree) =
+    returnedKernel K tree := by
+  ext1 s
+  apply Measure.ext_of_lintegral
+  intro f hf
+  simp only [← expectedCharge_zero_eq_lintegral K _ f hf]
+  exact (expectedCharge_step K (fun _ _ => 0) (fun _ => measurable_const) tree _ s 0).trans
+    (zero_add _)
+
+/-- A silently diverging tree has no terminal mass. -/
+@[simp] theorem returnedKernel_diverge : returnedKernel K (diverge : ITree P R) = 0 := by
+  ext1 s
+  apply Measure.ext_of_lintegral
+  intro f hf
+  rw [← expectedCharge_zero_eq_lintegral K _ f hf, zero_apply, lintegral_zero_measure]
+  exact expectedCharge_diverge K (fun _ _ => 0) (fun _ => measurable_const) _ s
+
+theorem WeakBisim.returnedKernel_eq {left right : ITree P R} (h : WeakBisim left right) :
+    returnedKernel K left = returnedKernel K right := by
+  ext1 s
+  apply Measure.ext_of_lintegral
+  intro f hf
+  rw [← expectedCharge_zero_eq_lintegral K _ f hf, ← expectedCharge_zero_eq_lintegral K _ f hf]
+  exact h.expectedCharge_eq K (fun _ _ => 0) (fun _ => measurable_const) _ s
+
+/-- The terminal law of a bind integrates the continuation's joint law from each returned state. -/
+theorem returnedKernel_bind {R' : Type*} [MeasurableSpace R'] (tree : ITree P R)
+    (next : R → ITree P R') (hnext : Measurable fun z : R × T => returnedKernel K (next z.1) z.2)
+    (s : T) : returnedKernel K (bind tree next) s =
+      (returnedKernel K tree s).bind (fun z => returnedKernel K (next z.1) z.2) := by
+  rw [returnedKernel, toResumptionWithTau_bind, PFunctor.Resumption.returnedKernel_bind _ _ _ hnext]
+  rfl
+
+/-- Total terminal mass is at most one under subprobability operations. -/
+instance returnedKernel.instIsSubprobabilityKernel [∀ a, IsSubprobabilityKernel (K a)]
+    (tree : ITree P R) : IsSubprobabilityKernel (returnedKernel K tree) := by
+  let (a : (P + PFunctor.y.{uA, uB}).A) : IsSubprobabilityKernel (withTauKernel K a) := by
+    rcases a with a | _
+    · exact inferInstanceAs (IsSubprobabilityKernel (K a))
+    · unfold withTauKernel
+      infer_instance
+  unfold returnedKernel
+  infer_instance
+
+end Returned
+
+/-- With every price and terminal credit zero, any client has zero charge. -/
+@[simp] theorem expectedCharge_zero_bot (tree : ITree P R) (s : T) :
+    expectedCharge K 0 (fun _ => measurable_const) tree (fun _ => ⊥) s = 0 := by
+  let : MeasurableSpace R := ⊤
+  exact (expectedCharge_zero_eq_lintegral K tree (fun _ => 0) measurable_const s).trans
+    (by simp)
+
 section Transfer
 
 open PFunctor
@@ -267,43 +364,83 @@ private noncomputable def observePrivateState (s : S) :
   .ofFun (fun f => ⟨fun t => f.1 (s, t), f.2.comp (measurable_const.prodMk measurable_id)⟩)
     (ωScottContinuous.of_monotone_map_ωSup ⟨fun _ _ h t => h (s, t), fun _ => rfl⟩)
 
+/-- The source kernel induced by a stateful implementation. Its transition carries both the
+implementation's private state and the target's state. -/
+@[expose] noncomputable def handlerKernel (hK : ∀ a, Measurable (handlerReturnLaw h K a)) :
+    F.KernelHandler (S × T) := fun a => ⟨handlerReturnLaw h K a, hK a⟩
+
+private theorem denote_handler_eq (a : F.A) (k : F.B a → MeasurableExpectation (S × T))
+    (s : S) (t : T) :
+    (denote (fun z : F.B a × S => observePrivateState z.2 (k z.1))
+      (statefulExpectedChargeAlgebra K c hc) (h a s)).1 t =
+      handlerCharge h K c hc a (s, t) + ∫⁻ z, (k z.1).1 z.2 ∂handlerReturnLaw h K a (s, t) := by
+  rw [← expectedCharge_eq_denote]
+  have hk : Measurable (fun z : F.B a × S × T => (k z.1).1 z.2) :=
+    measurable_from_prod_countable_right fun b => (k b).2
+  rw [handlerReturnLaw, lintegral_map hk MeasurableEquiv.prodAssoc.measurable]
+  exact expectedCharge_eq_add_lintegral K c hc (h a s)
+    (fun z => (k z.1.1).1 (z.1.2, z.2)) (hk.comp MeasurableEquiv.prodAssoc.measurable) t
+
+variable (hK : ∀ a, Measurable (handlerReturnLaw h K a))
+
+/-- A pointwise per-operation budget bounds the executed client, including when operation
+implementations diverge. Only the budget and the induced joint law must be measurable in
+the two incoming states. -/
+theorem expectedCharge_interp_run_unbounded_le (price : F.A → S × T → ℝ≥0∞)
+    (hp : ∀ a, Measurable (price a)) (hcall : ∀ a st, handlerCharge h K c hc a st ≤ price a st)
+    (tree : ITree F A) (ret : A → MeasurableExpectation (S × T)) (s : S) (t : T) :
+    expectedCharge K c hc ((interp h tree).run s)
+      (fun z => ⟨fun t => (ret z.1).1 (z.2, t),
+        (ret z.1).2.comp (measurable_const.prodMk measurable_id)⟩) t ≤
+      expectedCharge (handlerKernel h K hK) price hp tree ret (s, t) := by
+  rw [expectedCharge_eq_denote, expectedCharge_eq_denote]
+  refine (denote_interp_run_le h (statefulExpectedChargeAlgebra (handlerKernel h K hK) price hp)
+    (statefulExpectedChargeAlgebra K c hc) (fun e s => observePrivateState s e) ?_ ret tree s) t
+  intro a k state t'
+  change (denote _ (statefulExpectedChargeAlgebra K c hc) (h a state)).1 t' ≤
+    (statefulExpectedChargeAlgebra (handlerKernel h K hK) price hp a k).1 (state, t')
+  rw [denote_handler_eq, Resumption.statefulExpectedChargeAlgebra_apply]
+  exact add_le_add_left (hcall a (state, t')) _
+
 /-- Expected-charge transfer for potentially divergent clients and operation implementations.
 The lower-level kernel carries its own state. The induced source kernel keeps both states.
 Silent interpreter guards cost zero. -/
 theorem expectedCharge_interp_run_unbounded
-    (hK : ∀ a, Measurable (handlerReturnLaw h K a))
     (hcost : ∀ a, Measurable (handlerCharge h K c hc a))
     (tree : ITree F A) (ret : A → MeasurableExpectation (S × T)) (s : S) (t : T) :
     expectedCharge K c hc ((interp h tree).run s)
       (fun z => ⟨fun t => (ret z.1).1 (z.2, t),
         (ret z.1).2.comp (measurable_const.prodMk measurable_id)⟩) t =
-      expectedCharge (fun a => ⟨handlerReturnLaw h K a, hK a⟩)
-        (handlerCharge h K c hc) hcost tree ret (s, t) := by
+      expectedCharge (handlerKernel h K hK) (handlerCharge h K c hc) hcost tree ret (s, t) := by
   rw [expectedCharge_eq_denote, expectedCharge_eq_denote]
   have eq := denote_interp_run h
-    (statefulExpectedChargeAlgebra (fun a => ⟨handlerReturnLaw h K a, hK a⟩)
-      (handlerCharge h K c hc) hcost) (statefulExpectedChargeAlgebra K c hc)
-    observePrivateState (fun _ => rfl) ?_ ret tree s
+    (statefulExpectedChargeAlgebra (handlerKernel h K hK) (handlerCharge h K c hc) hcost)
+    (statefulExpectedChargeAlgebra K c hc) observePrivateState (fun _ => rfl) ?_ ret tree s
   · exact congrArg (fun e : MeasurableExpectation T => e.1 t) eq
   · intro a k state
-    apply Subtype.ext
-    funext t'
-    change (denote (fun z : F.B a × S => observePrivateState z.2 (k z.1))
-      (statefulExpectedChargeAlgebra K c hc) (h a state)).1 t' = _
-    rw [← expectedCharge_eq_denote]
-    let post (z : (F.B a × S) × T) := (k z.1.1).1 (z.1.2, z.2)
-    have hk : Measurable (fun z : F.B a × S × T => (k z.1).1 z.2) :=
-      measurable_from_prod_countable_right fun b => (k b).2
-    have hm : Measurable post := hk.comp MeasurableEquiv.prodAssoc.measurable
-    have split := expectedCharge_eq_add_lintegral K c hc (h a state) post hm t'
-    change _ = (statefulExpectedChargeAlgebra (fun a => ⟨handlerReturnLaw h K a, hK a⟩)
-      (handlerCharge h K c hc) hcost a k).1 (state, t')
-    rw [Resumption.statefulExpectedChargeAlgebra_apply]
-    change _ = handlerCharge h K c hc a (state, t') +
-      ∫⁻ z, (k z.1).1 z.2 ∂handlerReturnLaw h K a (state, t')
-    unfold handlerReturnLaw
-    rw [lintegral_map hk MeasurableEquiv.prodAssoc.measurable]
-    exact split
+    exact Subtype.ext (funext fun t' => denote_handler_eq h K c hc a k state t')
+
+/-- Interpreting a stateful client preserves the complete joint law of its result and both
+final states. This statement is independent of any charge assigned to the operations. -/
+theorem returnedKernel_interp_run [MeasurableSpace A] (tree : ITree F A) (s : S) (t : T) :
+    ((returnedKernel K ((interp h tree).run s)) t).map MeasurableEquiv.prodAssoc =
+      returnedKernel (handlerKernel h K hK) tree (s, t) := by
+  apply Measure.ext_of_lintegral
+  intro f hf
+  rw [lintegral_map hf MeasurableEquiv.prodAssoc.measurable]
+  have hz : handlerCharge h K 0 (fun _ => measurable_const) = 0 := by
+    funext a st
+    exact expectedCharge_zero_bot K (h a st.1) st.2
+  have hm : ∀ a, Measurable (handlerCharge h K 0 (fun _ => measurable_const) a) := by
+    rw [hz]
+    exact fun _ => measurable_const
+  have sim := expectedCharge_interp_run_unbounded h K 0 (fun _ => measurable_const) hK hm tree
+    (fun a => ⟨fun st => f (a, st), hf.comp (measurable_const.prodMk measurable_id)⟩) s t
+  refine (expectedCharge_zero_eq_lintegral K _ (fun z => f (MeasurableEquiv.prodAssoc z))
+    (hf.comp MeasurableEquiv.prodAssoc.measurable) t).symm.trans ?_
+  refine Eq.trans ?_ (expectedCharge_zero_eq_lintegral (handlerKernel h K hK) tree f hf (s, t))
+  simp only [hz] at sim
+  exact sim
 
 end UnboundedHandler
 
