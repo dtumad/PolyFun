@@ -87,7 +87,6 @@ example (ret : Unit → MeasurableExpectation Bool) (s : Bool) :
   · simp
   · exact ITree.expectedCharge_diverge_of_pos _ _ _ _ _ zero_lt_one
 
-
 private def spendThenDiverge : PFunctor.Handler (StateT Unit (ITree Tick)) Tick :=
   fun _ _ => ITree.query () fun _ => ITree.diverge
 
@@ -103,20 +102,7 @@ private theorem divergent_implementation :
   · unfold ITree.handlerCharge spendThenDiverge
     rw [ITree.expectedCharge_query (P := Tick) (T := Bool)]
     simp
-  · have zeroLaw : ITree.returnedKernel target (spendThenDiverge () ()) false = 0 := by
-      apply Measure.ext_of_lintegral
-      intro f hf
-      have h := ITree.expectedCharge_eq_add_lintegral target 0 (fun _ => measurable_const)
-        (spendThenDiverge () ()) f hf false
-      have free (ret : Unit × Unit → MeasurableExpectation Bool) :
-          ITree.expectedCharge target 0 (fun _ => measurable_const)
-            (spendThenDiverge () ()) ret false = 0 := by
-        refine (ITree.expectedCharge_query (P := Tick) target (fun _ _ => 0)
-          (fun _ => measurable_const) () (fun _ => ITree.diverge) ret false 0).trans ?_
-        simp
-      rw [free, free, zero_add] at h
-      simpa using h.symm
-    simp [ITree.handlerReturnLaw, zeroLaw]
+  · simp [ITree.handlerReturnLaw, spendThenDiverge, ITree.returnedKernel_query (P := Tick)]
 
 /-- The operational interpreter still counts a divergent implementation's paid work. The
 client's infinite return credit never becomes payable. -/
@@ -129,6 +115,63 @@ example : ITree.expectedCharge target (fun _ _ => 4) (fun _ => measurable_const)
     (fun _ => Measurable.of_discrete) (fun _ => Measurable.of_discrete)
     (ITree.query () fun _ => ITree.pure ()) ret () false
   rw [ITree.expectedCharge_query (P := Tick) (T := Unit × Bool)] at sim
-  simpa [ret, divergent_implementation.1, divergent_implementation.2] using sim
+  simpa [ret, ITree.handlerKernel, divergent_implementation.1, divergent_implementation.2] using sim
+
+private def toggleBoth : PFunctor.Handler (StateT Bool (ITree Tick)) Tick :=
+  fun _ s => ITree.query () fun _ => ITree.pure ((), !s)
+
+private def oneCall : ITree Tick Unit := ITree.query () fun _ => ITree.pure ()
+
+/-- A request with infinite cost can still return. The executed client's terminal law
+records the implementation state and the target state in their respective positions. -/
+example :
+    ITree.handlerCharge toggleBoth target (fun _ _ => ⊤) (fun _ => measurable_const)
+      () (false, true) = ⊤ ∧
+    ((ITree.returnedKernel target ((ITree.interp toggleBoth oneCall).run false)) true).map
+      MeasurableEquiv.prodAssoc = Measure.dirac ((), true, false) := by
+  constructor
+  · unfold ITree.handlerCharge toggleBoth
+    rw [ITree.expectedCharge_query (P := Tick) (T := Bool)]
+    exact top_add _
+  · rw [ITree.returnedKernel_interp_run toggleBoth target (fun _ => Measurable.of_discrete)]
+    simp only [oneCall, ITree.returnedKernel_query (P := Tick), ITree.returnedKernel_pure,
+      ITree.handlerKernel, ProbabilityTheory.Kernel.coe_mk, ITree.handlerReturnLaw, toggleBoth,
+      target, KernelHandler.ofFun, ProbabilityTheory.Kernel.deterministic_apply]
+    simp [Measure.dirac_bind Measurable.of_discrete]
+    rfl
+
+private def hiddenCall {S : Type} (spend : S → Bool) :
+    PFunctor.Handler (StateT S (ITree Tick)) Tick :=
+  fun _ s => if spend s then ITree.query () fun _ => ITree.diverge else ITree.diverge
+
+/-- The handler may branch on an arbitrary private predicate. Every branch diverges, so the
+return law is measurable, and four bounds its charge without measurability of the predicate. -/
+example {S : Type} [MeasurableSpace S] (spend : S → Bool) (tree : ITree Tick Unit)
+    (s : S) (t : Bool) :
+    ITree.expectedCharge target (fun _ _ => 4) (fun _ => measurable_const)
+      ((ITree.interp (hiddenCall spend) tree).run s) (fun _ => ⊥) t ≤
+    ITree.expectedCharge (P := Tick) (fun _ => 0) (fun _ _ => 4) (fun _ => measurable_const)
+      tree (fun _ => ⊥) (s, t) := by
+  have hlaw (a : Tick.A) : ITree.handlerReturnLaw (hiddenCall spend) target a = 0 := by
+    funext st
+    cases hs : spend st.1 <;>
+      simp [ITree.handlerReturnLaw, hiddenCall, hs, ITree.returnedKernel_query (P := Tick)]
+  have hm (a : Tick.A) : Measurable (ITree.handlerReturnLaw (hiddenCall spend) target a) := by
+    rw [hlaw]
+    exact measurable_const
+  have hcost (a : Tick.A) (st : S × Bool) :
+      ITree.handlerCharge (hiddenCall spend) target (fun _ _ => 4) (fun _ => measurable_const)
+        a st ≤ 4 := by
+    cases hs : spend st.1 <;>
+      simp [ITree.handlerCharge, hiddenCall, hs, ITree.expectedCharge_query (P := Tick)]
+  have sim := ITree.expectedCharge_interp_run_unbounded_le (hiddenCall spend) target
+    (fun _ _ => 4) (fun _ => measurable_const) hm (fun _ _ => 4) (fun _ => measurable_const)
+    hcost tree (fun _ => ⊥) s t
+  have hker : ITree.handlerKernel (hiddenCall spend) target hm = fun _ => 0 := by
+    funext a
+    ext1 st
+    exact congrFun (hlaw a) st
+  rw [hker] at sim
+  exact sim
 
 end PolyFunTest.Probability.ResumptionExpectedCharge

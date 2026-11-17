@@ -48,7 +48,7 @@ private theorem fresh_apply (i : ℕ) : fresh i = coin (true, i + 1) (false, i +
 
 private instance : IsMarkovKernel fresh where
   isProbabilityMeasure i := ⟨by
-    simp [fresh_apply, coin, Measure.add_apply, ENNReal.inv_two_add_inv_two]⟩
+    simp [fresh_apply, coin, ENNReal.inv_two_add_inv_two]⟩
 
 private theorem fresh_succ (c : ℕ → ℝ≥0∞) (done cut : ℝ≥0∞) (n i : ℕ) :
     observe fresh c done cut (n + 1) i = c i + (2⁻¹ * done +
@@ -62,7 +62,7 @@ theorem fresh_success (i : ℕ) :
   apply expectedCharge_tree_success (p := 2⁻¹) (K := fresh) (I := fun _ => True) (by norm_num)
     (fun _ _ => Filter.Eventually.of_forall (by simp)) _ i trivial
   intro t _
-  simp [fresh_apply, coin, Measure.add_apply, Measure.smul_apply, Measure.dirac_apply_of_mem]
+  simp [fresh_apply, coin, Measure.dirac_apply_of_mem]
 
 private theorem fresh_unit_observe (n i : ℕ) :
     observe fresh 1 0 0 n i = ∑ j ∈ Finset.range n, (2⁻¹ : ℝ≥0∞) ^ j := by
