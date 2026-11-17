@@ -44,6 +44,7 @@ The measure interpretation of a construction lives in a `Measure` companion besi
 measure home of its area. An area is a directory that holds one kind of construction, together with
 its subdirectories. In `PolyFun/`, the areas with measure modules are `PFunctor/` (polynomial
 interfaces), `PFunctor/Free/` (free programs), `PFunctor/Wiring/` (polynomial wiring),
+`PFunctor/Resumption/` (potentially infinite visible interaction), `ITree/` (silent steps),
 `Control/Monad/` (monads), `Control/Domain/` (partial results) and `Control/Semantics/` (certified
 meanings). A measure interpretation of another kind of construction starts a new area. Each area
 whose constructions get a measure interpretation has one measure home: `<area>/Measure.lean` holds
@@ -195,6 +196,11 @@ measure module.
   simulated program's expected charge is at most the source program's under `c`, with each call
   answered by the measure fold of its implementation (`wpFold_expectedCharge_liftM_le`; the exact
   form is `wpFold_expectedCharge_liftM`).
+- **Stateful expected charge and retry.** A request can change the state that determines the
+  cost and answer law of the next request. Stateful handler transfer keeps the joint answer and
+  next state. The same cost extends to infinite interactions by taking the supremum over finite
+  prefixes. See [Stateful expected cost](expected-cost.md) for the transfer rule, the terminal
+  kernel, the treatment of silent steps and the conditional geometric bound.
 - **Kernel handlers**
   ([`Free/Measure/Kernel`](../../PolyFun/PFunctor/Free/Measure/Kernel.lean),
   [`Free/Measure/Kernel/Transport`](../../PolyFun/PFunctor/Free/Measure/Kernel/Transport.lean),
