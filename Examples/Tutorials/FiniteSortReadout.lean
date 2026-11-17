@@ -65,7 +65,7 @@ theorem eventually_sort_eq (p : Equiv.Perm (Fin n)) {x : Fin n → ℝ}
     (hx : StrictMono (x ∘ p)) : ∀ᶠ y in 𝓝 x, Tuple.sort y = p := by
   filter_upwards [eventually_strictMono p hx] with y hy
   refine (Tuple.eq_sort_iff.mpr ⟨hy.monotone, ?_⟩).symm
-  exact fun _ _ hij h => ((hy hij).ne h).elim
+  exact fun _ _ _ h => (congrArg p (hy.injective h)).le
 
 /-- Assigning each permuted coordinate its rank gives an interior point. -/
 theorem interior_chamber_nonempty (p : Equiv.Perm (Fin n)) :

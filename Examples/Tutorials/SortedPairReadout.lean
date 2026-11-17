@@ -37,8 +37,8 @@ private theorem uniqueDiff_le {E : Type*} [NormedAddCommGroup E] [NormedSpace �
   · intro u hu v hv a b ha hb _
     change f (a • u + b • v) ≤ g (a • u + b • v)
     simpa using add_le_add (mul_le_mul_of_nonneg_left hu ha) (mul_le_mul_of_nonneg_left hv hb)
-  · exact ⟨y, interior_maximal (fun _ (hz : f _ < g _) => hz.le)
-      (isOpen_lt f.continuous g.continuous) hy⟩
+  · exact ⟨y, mem_interior_iff_mem_nhds.mpr <|
+      (f.continuous.continuousAt.eventually_lt g.continuous.continuousAt hy).mono fun _ hz => hz.le⟩
 
 variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 variable {h : ℝ × ℝ → F} {D : (ℝ × ℝ) →L[ℝ] F} {c : ℝ}
