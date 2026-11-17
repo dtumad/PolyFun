@@ -96,6 +96,76 @@ distinction. Even a fresh fair coin with success mass one has infinite expected 
 if attempt `i` costs `2^i`: it is reached with probability `2^(-i)` and contributes one in
 expectation. [Compiled examples](../../Examples/Tutorials/ExpectedRetry.lean). [Retry equations and bounds](../../PolyFun/PFunctor/Resumption/Measure/Retry.lean)
 
+## Collecting several results
+
+Use `Collect.collect act accept k initial` when the next request depends on earlier successes.
+At a stage with `i + 1` successes still needed, `act i x` chooses the request.
+`accept i x answer` either asks for another attempt or yields the accumulator for stage `i`.
+A list accumulator can record the payloads in discovery order. The service kernel threads its
+own state through every attempt, including rejected ones.
+
+To prove a bound, give an invariant `I j x s` relating the outstanding successes, accumulator
+and service state. Show that rejection preserves this stage and acceptance enters the next one.
+With a positive floor `pᵢ` on the acceptance mass throughout each reached stage, unit-mass
+trials give a final result of mass one. A per-attempt charge of at most `Cᵢ` gives the cost
+bound `∑ i < k, Cᵢ / pᵢ` with zero terminal credit. The upper bound also holds for
+subprobability trials. Supply the acceptance estimate directly to
+`expectedCharge_collect_le_of_accept`, or use an upper bound on the rejection mass.
+For exact costs on unit-mass trials, `expectedCharge_collect_eq_of_accept` takes the measured
+acceptance mass and price at each stage.
+
+A potential can depend on the stage and payload as well as on service state. Compare the actual
+charge plus expected outgoing potential with the stage allowance plus incoming potential. On
+rejection use the current stage's potential, and on success use the next stage's. For example,
+a service that spends five units to initialize and one unit per fair trial needs at most
+`2k + 5` from cold start. Both outcomes leave it warm. [Collector rules](../../PolyFun/PFunctor/Resumption/Measure/Collect.lean)
+and [setup proof](../../PolyFunTest/Probability/CollectPotential.lean).
+
+For `N` uniform coupon types, keep a list of distinct discoveries. If `j` types are missing,
+exactly `j` of the `N` possible answers advance the stage. The exact stage-cost rule with
+success probability `j / N` gives `N · ∑_{j=1}^N 1/j` expected draws. The final list is almost
+surely a permutation of the population. For `N = 0` it returns the empty list immediately.
+With two types, a service that samples once and replays its first coupon forever has zero
+completion mass and infinite expected draw count. [Compiled coupon collector](../../Examples/Tutorials/CouponCollector.lean)
+
+There are two useful bounds on attempts. `Collect.collectWithin` resets the attempt budget at
+each success and returns `none` when any stage exhausts its fuel. Give exhaustion zero terminal
+credit. The costs then increase with the per-stage fuel, and their supremum is the unbounded
+cost, including on nonterminating paths. This limit holds for arbitrary kernels and measurable
+nonnegative prices and postcosts. [Fuel-limit theorem](../../PolyFun/PFunctor/Resumption/Measure/CollectLimit.lean)
+
+A single global budget uses `truncate n` on the unbounded program. Assume each reached trial has total mass at most one and a
+success probability of at least `p` in its incoming state. The unfinished mass still present
+at the cutoff is at most the probability of fewer than `k` successes in `n` independent
+Bernoulli trials of bias `p`. Aborted runs have zero mass in the cutoff event. The bound allows
+dependence between the service's attempts. Constant conditional success
+probability and unit mass give equality. [Global cutoff and binomial bound](../../PolyFun/PFunctor/Resumption/Measure/CollectCutoff.lean)
+
+## Normalizing a finite client
+
+A finite `do` program can use the existing upper-bound interpretation and `vcgen`.
+After exposing the fold, use `simp only [expected_cost]` for a symbolic calculation or
+`norm_num [expected_cost, ...]` with the concrete program and kernel definitions. The named
+simp set expands a weighted mixture into its weighted continuation values. A fair coin that
+triggers a second unit-priced call only on heads costs `1 + 1/2`. The direct client proof is
+
+```lean
+example : wpFold charge flipAgain (fun _ _ => 0) () = 1 + 2⁻¹ := by
+  simp only [flipAgain, charge, fair, expected_cost]
+  norm_num [expected_cost]
+```
+
+An unspecified kernel leaves a joint integral in the goal. For an explicitly linked handler, rewrite the outer `run_link`
+equation and then use `handler_nf` on the resulting runs. [Finite-kernel rules](../../PolyFun/PFunctor/Free/Measure/FiniteKernel.lean)
+and [worked client proofs](../../PolyFunTest/Do/ExpectedCost.lean).
+
+An interaction-tree client can use `returnedKernel_interp_run` to transport its full joint
+return law across a stateful implementation, including at infinite incurred charge. The
+`pure`, silent-step and divergence equations simplify terminal kernels directly. For an upper
+bound on a potentially divergent implementation, give `expectedCharge_interp_run_unbounded_le`
+a measurable allowance, its one-call bound and a measurable joint return law.
+[Interaction-tree equations](../../PolyFun/ITree/Measure.lean)
+
 ## Connections to other cost models
 
 Azevedo de Amorim separates the joint cost/result distribution of successful runs from the expected
@@ -111,6 +181,13 @@ Kaminski, Katoen, Matheja and Olmedo give an expected-runtime transformer and
 loop rules for a language with a specified step cost. Here the local obligation is expressed on an
 operation implementation and the result concerns the client's chosen request prices.
 [Expected-cost references](../../REFERENCES.md#expected-cost-citations)
+
+In the Tachis coupon collector, the implementation keeps an array of seen coupons and a
+counter. Its proof frames credits for later stages while paying for the current draw. In the
+PolyFun example the client supplies the distinct-list invariant and the count of unseen answers.
+The collector theorem handles the geometric waiting time and composition across stages.
+Both calculations price a random draw. An implementation that also prices scans of the list
+would have a different local charge. [Tachis, §5.1](https://arxiv.org/html/2405.20083v3#S5.SS1)
 
 Tachis and ExpIris distribute credit across sampled branches and support ownership assertions
 for imperative programs. The inequality above captures the expected-potential calculation on an
@@ -131,3 +208,13 @@ PolyFun resumption cost. With arbitrary lossy rounds, the finite CatCrypt cost i
 by the same PolyFun observation priced by the one-round CatCrypt cost. On an aborting round,
 a charge collected only upon return can vanish.
 [CatCrypt's cost and retry definitions](https://github.com/spitters/CatCrypt-core/blob/76c5ee820139587d12dc7b5d9e19f65e0a310c74/CatCryptCore/Unary/ExpectedCost.lean)
+
+CatCrypt's `collectN body fuel k` resets the fuel at each stage and fails the whole computation
+on an exhausted stage. Giving exhausted outputs zero terminal value gives the same observations
+of ordered lists and final heaps. For countable payload types this also identifies the concrete
+measures after removing exhausted outputs. For the same fair unit-priced trial, one allowed attempt to
+collect one payload costs one unit on reaching the request. CatCrypt's terminal writer records
+one unit only on the half of runs that succeed, giving expected cost one half. Lossless rounds
+with zero probability of exhausting the stage's fuel from every starting heap yield equality
+of the two costs.
+[CatCrypt collector definition](https://github.com/spitters/CatCrypt-core/blob/76c5ee820139587d12dc7b5d9e19f65e0a310c74/CatCryptCore/Container/ExpectedDNOp.lean)

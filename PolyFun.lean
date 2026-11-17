@@ -384,6 +384,8 @@ public import PolyFun.PFunctor.Free.Measure
 public import PolyFun.PFunctor.Free.Measure.EvalDist
 public import PolyFun.PFunctor.Free.Measure.Expectation
 public import PolyFun.PFunctor.Free.Measure.ExpectedCharge
+public import PolyFun.PFunctor.Free.Measure.FiniteKernel
+public import PolyFun.PFunctor.Free.Measure.FiniteKernel.Attr
 public import PolyFun.PFunctor.Free.Measure.Kernel
 public import PolyFun.PFunctor.Free.Measure.Kernel.Handler
 public import PolyFun.PFunctor.Free.Measure.Kernel.Transport
@@ -471,11 +473,15 @@ public import PolyFun.PFunctor.PatternRunsOnMatter.Parallel
 public import PolyFun.PFunctor.PatternRunsOnMatter.Universal
 public import PolyFun.PFunctor.Resumption
 public import PolyFun.PFunctor.Resumption.Charge
+public import PolyFun.PFunctor.Resumption.Collect
 public import PolyFun.PFunctor.Resumption.Domain
 public import PolyFun.PFunctor.Resumption.DomainLaws
 public import PolyFun.PFunctor.Resumption.DomainTruncate
 public import PolyFun.PFunctor.Resumption.Empty
 public import PolyFun.PFunctor.Resumption.Measure
+public import PolyFun.PFunctor.Resumption.Measure.Collect
+public import PolyFun.PFunctor.Resumption.Measure.CollectCutoff
+public import PolyFun.PFunctor.Resumption.Measure.CollectLimit
 public import PolyFun.PFunctor.Resumption.Measure.ExpectedCharge
 public import PolyFun.PFunctor.Resumption.Measure.Retry
 public import PolyFun.PFunctor.Resumption.Truncate

@@ -147,7 +147,7 @@ theorem iSup_observe_cost_le_div (hI : Preserves K I) {p : ℝ≥0∞} (hp : p �
     (hc : ∀ s, I s → c s ≤ C) (s : S) (hs : I s) :
     (⨆ n, observe K c 0 0 n s) ≤ C / p := by
   refine iSup_le fun n => (observe_cost_le_geom_sum hI hq hc n s hs).trans ?_
-  have h := ENNReal.sum_le_tsum (f := fun i : ℕ => (1 - p) ^ i) (Finset.range n)
+  have h := sum_le_tsum (f := fun i : ℕ => (1 - p) ^ i) (Finset.range n)
   have hfin : 1 - p ≠ ∞ := ne_top_of_le_ne_top ENNReal.one_ne_top tsub_le_self
   have hsub := (ENNReal.cancel_of_ne hfin).tsub_tsub_cancel_of_le hp
   simpa [ENNReal.tsum_geometric, hsub, div_eq_mul_inv]
