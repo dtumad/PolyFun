@@ -20,8 +20,9 @@ import Mathlib.Analysis.Calculus.FDeriv.Comp
 Sorting a tuple permutes its coordinates. At a tie several permutations give the same sorted
 tuple. If the readout is differentiable there, its derivative must agree after precomposition
 with each possible permutation for the sorted readout to have a derivative. A scalar weighted
-readout satisfies this condition exactly when its weights agree
-at ranks occupied by equal entries. The argument includes the empty tuple.
+readout satisfies this condition exactly when its weights agree at ranks occupied by equal entries.
+For a sum of the largest entries, only the gap at the cutoff matters. The general weighted
+criterion includes the empty tuple.
 -/
 
 public section
@@ -80,15 +81,21 @@ theorem interior_chamber_nonempty (p : Equiv.Perm (Fin n)) :
 theorem uniqueDiffOn_chamber (p : Equiv.Perm (Fin n)) : UniqueDiffOn ℝ (chamber p) :=
   uniqueDiffOn_convex (convex_chamber p) (interior_chamber_nonempty p)
 
-variable {Y : Type*} [NormedAddCommGroup Y] [NormedSpace ℝ Y]
-
 /-- Reindex the coordinates by a fixed permutation as a continuous linear map. -/
 def permute (p : Equiv.Perm (Fin n)) : (Fin n → ℝ) →L[ℝ] (Fin n → ℝ) :=
   ContinuousLinearMap.pi fun i => ContinuousLinearMap.proj (p i)
 
+variable {Y : Type*}
+
 /-- Sort the tuple in ascending order, then evaluate the readout on the sorted tuple. -/
 noncomputable def sortedReadout (read : (Fin n → ℝ) → Y) (x : Fin n → ℝ) : Y :=
   read (x ∘ Tuple.sort x)
+
+/-- The readout receives the coordinates in ascending order. -/
+@[simp] theorem sortedReadout_apply (read : (Fin n → ℝ) → Y) (x : Fin n → ℝ) :
+    sortedReadout read x = read (x ∘ Tuple.sort x) := by simp [sortedReadout]
+
+variable [NormedAddCommGroup Y] [NormedSpace ℝ Y]
 
 /-- At a fixed input, precompose the readout derivative with every permutation sorting that
 input. A proposed derivative works exactly when each of those composites is the proposed map. -/
@@ -124,12 +131,15 @@ theorem hasFDerivAt_sortedReadout_iff {read : (Fin n → ℝ) → Y} (x : Fin n 
 noncomputable def weighted (w : Fin n → ℝ) : (Fin n → ℝ) →L[ℝ] ℝ :=
   ∑ i, w i • ContinuousLinearMap.proj (R := ℝ) i
 
+/-- Evaluate a weighted readout as the sum of the coordinate products. -/
+@[simp] theorem weighted_apply (w x : Fin n → ℝ) : weighted w x = ∑ i, w i * x i := by
+  simp [weighted]
+
 private theorem weighted_permute_apply (w : Fin n → ℝ) (p : Equiv.Perm (Fin n))
     (x : Fin n → ℝ) :
     (weighted w).comp (permute p) x = ∑ k, w (p.symm k) * x k := by
   change (weighted w) (permute p x) = _
-  simp only [weighted, sum_apply, smul_apply,
-    ContinuousLinearMap.proj_apply, smul_eq_mul]
+  rw [weighted_apply]
   rw [← Equiv.sum_comp p (fun k => w (p.symm k) * x k)]
   simp [permute]
 
@@ -179,5 +189,31 @@ theorem differentiableAt_weighted_iff (w x : Fin n → ℝ) :
     apply h
     have hsort : x ∘ q = x ∘ p := Tuple.comp_sort_eq_comp_iff_monotone.mpr hq
     simpa [p] using (congrFun hsort (q.symm k)).symm
+
+/-- Summing ranks from `r.succ` to the largest is differentiable exactly when the two
+entries on opposite sides of the cutoff differ. Ties elsewhere are unrestricted. -/
+theorem differentiableAt_sum_largest_iff (r : Fin n) (x : Fin (n + 1) → ℝ) :
+    DifferentiableAt ℝ (fun y : Fin (n + 1) → ℝ => ∑ i ∈ Finset.Ici r.succ, y (Tuple.sort y i)) x ↔
+      x (Tuple.sort x r.castSucc) < x (Tuple.sort x r.succ) := by
+  let w (i : Fin (n + 1)) : ℝ := if r.succ ≤ i then 1 else 0
+  have hsum (y : Fin (n + 1) → ℝ) :
+      sortedReadout (weighted w) y = ∑ i ∈ Finset.Ici r.succ, y (Tuple.sort y i) := by
+    rw [← Finset.filter_le_eq_Ici, Finset.sum_filter]
+    simp [w, ite_mul]
+  rw [← funext hsum, differentiableAt_weighted_iff]
+  have hy := Tuple.monotone_sort x
+  constructor
+  · intro h
+    apply lt_of_le_of_ne (hy r.castSucc_lt_succ.le)
+    intro he
+    have hw := h r.castSucc r.succ he
+    simp [w] at hw
+  · intro hgap i j he
+    have hside {a b : Fin (n + 1)} (hab : x (Tuple.sort x a) = x (Tuple.sort x b))
+        (ha : r.succ ≤ a) : r.succ ≤ b := by
+      by_contra hb
+      have hlow := hy (Fin.le_castSucc_iff.mpr (lt_of_not_ge hb))
+      exact (hlow.trans_lt (hgap.trans_le (hy ha))).ne hab.symm
+    simp only [w, propext ⟨hside he, hside he.symm⟩]
 
 end Examples.FiniteSortReadout
