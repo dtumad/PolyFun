@@ -39,8 +39,39 @@ The kernel must preserve the invariant almost surely. At any valid starting stat
 actual expected cost, including the potential still present on return, is bounded by its budgeted
 cost plus its initial potential. A one-time setup charge is a simple example. Finite nonnegative
 linear combinations of resource prices commute with the stateful fold, including its terminal
-postcost. This computes the expected price of a resource vector. Recovering its joint distribution
-requires a richer observation. [Finite pricing](../../PolyFun/PFunctor/Free/Measure/StatefulExpectedChargePrice.lean)
+postcost. This computes the expected price of a resource vector. A marked handler also retains its
+joint distribution with the result and final state. [Finite pricing](../../PolyFun/PFunctor/Free/Measure/StatefulExpectedChargePrice.lean)
+
+## Resource marks and completed bills
+
+Use a `MarkedKernelHandler P S R` when the resource used by a call can depend on its answer.
+A returned call supplies its answer, next private state, and a mark in a measurable additive
+monoid `R`. The program adds marks in execution order. Its `joint` kernel retains all three
+components, so a caller can choose a price after running the program or ask how often the final
+tally crosses a threshold. For example, a constant tally of one and a fair choice of zero or two
+have the same mean. Only the second crosses two.
+[Marked handlers](../../PolyFun/PFunctor/Free/Measure/MarkedResource.lean) ·
+[Threshold example](../../PolyFunTest/Probability/AdaptiveResource.lean)
+
+For a measurable additive price `p : R →+ ℝ≥0∞`, `bill p x f s` integrates the price of each
+completed run multiplied by `f(result, finalState)`. This is an unnormalized bill. If a second
+stage can abort, `bill_bind` weights the first stage's realized price by the second stage's
+completion from that particular result and state. A randomized display of the final state can
+be applied to the price-weighted measure or composed with the terminal observation.
+For a handler with private state of its own, `joint_run` preserves the result, both final
+states, and the total mark. The corresponding charge certificate composes across calls.
+[Bind and display laws](../../PolyFun/PFunctor/Free/Measure/MarkedResource.lean) ·
+[Stateful handler substitution](../../PolyFun/PFunctor/Free/Measure/MarkedHandler.lean)
+
+An opaque call also supplies its incurred price `c`. The certificate `IsCharge p c` says that
+the expected price on its returning outcomes is at most `c`, with equality at incoming states
+where the operation returns almost surely. A tick followed by abort has a positive incurred
+price and zero completed bill. The inequality extends to infinite executions. At an initial
+state of full return mass it becomes an equality, even for infinite expected cost. The proof
+uses a nondecreasing tally and localizes full return mass to reached successor states.
+[Resumption theorem](../../PolyFun/PFunctor/Resumption/Measure/MarkedResource.lean) ·
+[Interaction-tree theorem](../../PolyFun/ITree/Measure/MarkedResource.lean) ·
+[Unbounded sequencing](../../PolyFun/ITree/Measure/MarkedBind.lean)
 
 ## Unbounded executions and terminal observations
 
@@ -96,13 +127,33 @@ distinction. Even a fresh fair coin with success mass one has infinite expected 
 if attempt `i` costs `2^i`: it is reached with probability `2^(-i)` and contributes one in
 expectation. [Compiled examples](../../Examples/Tutorials/ExpectedRetry.lean). [Retry equations and bounds](../../PolyFun/PFunctor/Resumption/Measure/Retry.lean)
 
+A core `vcgen` proof can use an operation specification for one retry and an invariant over
+the remaining fuel and the current state. The loop proof handles early exit. Its residual
+inequality bounds the immediate cost plus the expected potential on retry. An invariant
+uniform in fuel carries over to the unbounded computation. For interaction trees with
+free silent steps, `ITree.expectedCharge_eq_wpTotal` identifies incurred cost with the total
+weakest precondition. The upper-bound reading uses the dual order.
+[Retry loop and linked-handler proofs](../../PolyFunTest/Do/RetryCost.lean) ·
+[Interaction-tree WP bridge](../../PolyFun/ITree/WP/ExpectedCharge.lean)
+
+A rerun price can depend on a random world that stays fixed throughout the interaction.
+If each world admits at most `T` reruns in expectation, the expected bill is at most
+`T · E[ sup a, price(world, a) ]`. The client can use free observations before choosing its
+challenge. For a fair world bit, charge two for a match and zero otherwise. Each fixed
+challenge costs one on average. Reading the bit and choosing it costs two.
+[Per-world bound](../../PolyFun/PFunctor/Resumption/Measure/Rerun.lean) ·
+[Adaptive finder](../../PolyFunTest/Probability/AdaptiveResource.lean)
+
 ## Collecting several results
 
 Use `Collect.collect act accept k initial` when the next request depends on earlier successes.
 At a stage with `i + 1` successes still needed, `act i x` chooses the request.
 `accept i x answer` either asks for another attempt or yields the accumulator for stage `i`.
 A list accumulator can record the payloads in discovery order. The service kernel threads its
-own state through every attempt, including rejected ones.
+own state through every attempt, including rejected ones. A fair service can add a mark to
+the coordinate of each bit drawn while the collector alternates its target bit. At `k` stages
+the expected returned price is `k · (w(true) + w(false))`, even for infinite coordinate prices.
+[Marked collector and noisy display](../../PolyFunTest/Probability/MarkedCollector.lean)
 
 To prove a bound, give an invariant `I j x s` relating the outstanding successes, accumulator
 and service state. Show that rejection preserves this stage and acceptance enters the next one.

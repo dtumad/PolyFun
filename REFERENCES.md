@@ -334,6 +334,12 @@ Pedro H. Azevedo de Amorim, [*Denotational Foundations for Expected Cost Analysi
 Sections 3.3 and 5 compare terminal cost distributions, expected incurred costs, and scalar
 postexpectations.
 
+Zhifei Li and Jason Eisner, [*First- and Second-Order Expectation Semirings with Applications
+to Minimum-Risk Training on Translation Forests*](https://aclanthology.org/D09-1005/),
+EMNLP 2009, Table 1. The first-order product weights each part's resource by the other
+part's mass. The marked bind law integrates the continuation mass at the actual answer and
+successor state.
+
 Benjamin Lucien Kaminski, Joost-Pieter Katoen, Christoph Matheja and Federico Olmedo,
 [*Weakest Precondition Reasoning for Expected Runtimes of Randomized Algorithms*](https://doi.org/10.1145/3208102),
 JACM 2018. The expected-runtime transformer and its loop rules give operational meaning to

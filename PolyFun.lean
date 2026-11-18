@@ -144,6 +144,8 @@ public import PolyFun.ITree.Interp.State
 public import PolyFun.ITree.Interp.Stateful
 public import PolyFun.ITree.Machine
 public import PolyFun.ITree.Measure
+public import PolyFun.ITree.Measure.MarkedBind
+public import PolyFun.ITree.Measure.MarkedResource
 public import PolyFun.ITree.PatternRunsOnMatter
 public import PolyFun.ITree.Rec
 public import PolyFun.ITree.Rec.Facts
@@ -159,6 +161,7 @@ public import PolyFun.ITree.Unfold
 public import PolyFun.ITree.WP.Basic
 public import PolyFun.ITree.WP.Bind
 public import PolyFun.ITree.WP.Bisim
+public import PolyFun.ITree.WP.ExpectedCharge
 public import PolyFun.ITree.WP.Models
 public import PolyFun.ITree.WP.Support
 public import PolyFun.ITree.WP.Upstream
@@ -390,6 +393,8 @@ public import PolyFun.PFunctor.Free.Measure.Kernel
 public import PolyFun.PFunctor.Free.Measure.Kernel.Handler
 public import PolyFun.PFunctor.Free.Measure.Kernel.Transport
 public import PolyFun.PFunctor.Free.Measure.Lintegral
+public import PolyFun.PFunctor.Free.Measure.MarkedHandler
+public import PolyFun.PFunctor.Free.Measure.MarkedResource
 public import PolyFun.PFunctor.Free.Measure.Path
 public import PolyFun.PFunctor.Free.Measure.StatefulExpectedCharge
 public import PolyFun.PFunctor.Free.Measure.StatefulExpectedChargePrice
@@ -483,7 +488,11 @@ public import PolyFun.PFunctor.Resumption.Measure.Collect
 public import PolyFun.PFunctor.Resumption.Measure.CollectCutoff
 public import PolyFun.PFunctor.Resumption.Measure.CollectLimit
 public import PolyFun.PFunctor.Resumption.Measure.ExpectedCharge
+public import PolyFun.PFunctor.Resumption.Measure.MarkedBind
+public import PolyFun.PFunctor.Resumption.Measure.MarkedResource
+public import PolyFun.PFunctor.Resumption.Measure.Rerun
 public import PolyFun.PFunctor.Resumption.Measure.Retry
+public import PolyFun.PFunctor.Resumption.Measure.TerminalCharge
 public import PolyFun.PFunctor.Resumption.Truncate
 public import PolyFun.PFunctor.Resumption.WellFounded
 public import PolyFun.PFunctor.Slice

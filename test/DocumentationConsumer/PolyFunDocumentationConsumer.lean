@@ -16,6 +16,7 @@ import Examples.Tutorials.VersionedRequests
 import Examples.Tutorials.UpdatePolicies
 import PolyFun.PFunctor.Handler.Sum
 import PolyFun.PFunctor.Resumption.Measure
+import PolyFun.PFunctor.Resumption.Measure.MarkedResource
 import PolyFun.PFunctor.Resumption.Measure.Retry
 import Examples.Tutorials.ScopedPrograms
 import Examples.Tutorials.ScopedExecution
@@ -212,6 +213,17 @@ example {S : Type} [MeasurableSpace S] (K : Kernel S (Bool × S)) [IsMarkovKerne
     (s : S) (hs : I s) :
     expectedCharge (fun _ => K) (fun _ => c) Retry.tree (fun _ _ => 0) s ≤ C / p :=
   Retry.expectedCharge_tree_le_div hp hI hsucc hc s hs
+
+/-- A client reads the priced terminal resource from the joint law. Almost-sure return is
+tested on the underlying unmarked program at the chosen initial state. -/
+example {P : PFunctor} {S X R : Type} [MeasurableSpace S] [MeasurableSpace X]
+    [MeasurableSpace R] [AddMonoid R] [MeasurableAdd₂ R] [∀ a, MeasurableSpace (P.B a)]
+    [∀ a, Countable (P.B a)] [∀ a, MeasurableSingletonClass (P.B a)]
+    (J : MarkedKernelHandler P S R) [∀ a, IsSubprobabilityKernel (J a)]
+    (p : R →+ ℝ≥0∞) (hp : Measurable p) (c : P.A → S → ℝ≥0∞) (hc : J.IsCharge p c)
+    (x : Resumption P X) (s : S) (h : returnedKernel J.marginal x s Set.univ = 1) :
+    ∫⁻ z, p z.2.2 ∂J.returnedJoint x s = expectedCharge J.marginal c x (fun _ _ => 0) s :=
+  J.lintegral_price_returnedJoint_eq p hp hc x s h
 
 end ExpectedCostDocumentation
 

@@ -6,7 +6,7 @@ Authors: Devon Tuma
 
 module
 
-public import PolyFun.PFunctor.Resumption.Measure
+public import PolyFun.PFunctor.Resumption.Measure.TerminalCharge
 public import PolyFun.ITree.Interp.Domain
 public import PolyFun.ITree.Free
 
@@ -247,16 +247,62 @@ theorem returnedKernel_bind {R' : Type*} [MeasurableSpace R'] (tree : ITree P R)
   rw [returnedKernel, toResumptionWithTau_bind, PFunctor.Resumption.returnedKernel_bind _ _ _ hnext]
   rfl
 
+private instance withTauSubprobability [∀ a, IsSubprobabilityKernel (K a)]
+    (a : (P + PFunctor.y.{uA, uB}).A) : IsSubprobabilityKernel (withTauKernel K a) := by
+  rcases a with a | _
+  · exact inferInstanceAs (IsSubprobabilityKernel (K a))
+  · unfold withTauKernel
+    infer_instance
+
 /-- Total terminal mass is at most one under subprobability operations. -/
 instance returnedKernel.instIsSubprobabilityKernel [∀ a, IsSubprobabilityKernel (K a)]
     (tree : ITree P R) : IsSubprobabilityKernel (returnedKernel K tree) := by
-  let (a : (P + PFunctor.y.{uA, uB}).A) : IsSubprobabilityKernel (withTauKernel K a) := by
-    rcases a with a | _
-    · exact inferInstanceAs (IsSubprobabilityKernel (K a))
-    · unfold withTauKernel
-      infer_instance
   unfold returnedKernel
   infer_instance
+
+omit [∀ a, Countable (P.B a)] [∀ a, MeasurableSingletonClass (P.B a)] in
+private theorem withTau_meter (V : T → ℝ≥0∞) (hV : Measurable V) (s : T)
+    (u : PUnit.{uA + 1}) :
+    ∫⁻ z, V z.2 ∂withTauKernel K (.inr u) s = V s :=
+  lintegral_dirac' _ (show Measurable (fun z : PUnit × T => V z.2) from hV.comp measurable_snd)
+
+/-- A meter on private state gives an upper bound on the bill over completed runs.
+Silent guards preserve the state and carry zero price. -/
+theorem lintegral_meter_le_expectedCharge (V : T → ℝ≥0∞) (hV : Measurable V)
+    (hstep : ∀ a s, ∫⁻ z, V z.2 ∂K a s ≤ c a s + V s) (x : ITree P R) (s : T) :
+    ∫⁻ z, V z.2 ∂returnedKernel K x s ≤ expectedCharge K c hc x (fun _ => ⊥) s + V s := by
+  have h := PFunctor.Resumption.lintegral_meter_le_expectedCharge (withTauKernel K)
+    (withTauPrice c 0) V hV (fun a t => by
+      rcases a with a | u
+      · exact hstep a t
+      · simpa [withTauPrice] using (withTau_meter K V hV t u).le) (toResumptionWithTau x) s
+  rw [PFunctor.Resumption.expectedCharge_eq_denote _ _ (measurable_withTauPrice c hc 0)
+    _ _ (fun _ => measurable_const)] at h
+  exact h
+
+/-- When the tree returns almost surely from the initial state, its nondecreasing meter
+records every incurred charge, including infinite expected charge. -/
+theorem lintegral_meter_eq_expectedCharge_of_returnMass [∀ a, IsSubprobabilityKernel (K a)]
+    (V : T → ℝ≥0∞) (hV : Measurable V) (hgrow : ∀ a s, ∀ᵐ z ∂K a s, V s ≤ V z.2)
+    (hstep : ∀ a s, ∫⁻ z, V z.2 ∂K a s ≤ c a s + V s)
+    (hexact : ∀ a s, K a s Set.univ = 1 → ∫⁻ z, V z.2 ∂K a s = c a s + V s)
+    (x : ITree P R) (s : T) (hmass : returnedKernel K x s Set.univ = 1) :
+    ∫⁻ z, V z.2 ∂returnedKernel K x s = expectedCharge K c hc x (fun _ => ⊥) s + V s := by
+  have h := PFunctor.Resumption.lintegral_meter_eq_expectedCharge_of_returnMass (withTauKernel K)
+    (withTauPrice c 0) V hV (fun a t => by
+      rcases a with a | u
+      · exact hgrow a t
+      · apply (ae_dirac_iff (measurableSet_le measurable_const (hV.comp measurable_snd))).2
+        exact le_rfl) (fun a t => by
+      rcases a with a | u
+      · exact hstep a t
+      · simpa [withTauPrice] using (withTau_meter K V hV t u).le) (fun a t h => by
+      rcases a with a | u
+      · exact hexact a t h
+      · simpa [withTauPrice] using withTau_meter K V hV t u) (toResumptionWithTau x) s hmass
+  rw [PFunctor.Resumption.expectedCharge_eq_denote _ _ (measurable_withTauPrice c hc 0)
+    _ _ (fun _ => measurable_const)] at h
+  exact h
 
 end Returned
 
