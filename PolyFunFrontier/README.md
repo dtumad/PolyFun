@@ -32,6 +32,8 @@ moves upstream by changing its import prefix. PolyFunFrontier does the same one 
 |---|---|
 | `PFunctor/Free/DecisionTree` | Boolean decision trees are the free programs of `monomial ι Bool`; evaluation is the fold that answers queries from the input, and depth is the total roll bound |
 | `PFunctor/Free/DecisionTree/LowerBound` | cslib-frontier's decision-tree lower bounds for free programs: a program computing the parity of `n` bits has no total roll bound below `n`, and the sensitivity and restricted-parity bounds |
+| `PFunctor/Free/Realization` | A certificate for a family of free programs uses encoded local functions, primitive handlers, sequential composition, and fair-bit sampling. Folding the certified source through its handler yields one finite-control probabilistic Turing machine with a polynomial clock for every input word. |
+| `IPFunctor/Scoped/PolyTime` | A scoped term denotes a polynomial-time local function when its typed variable lookups and constructor interpretations preserve polynomial time. The two-variable bitwise XOR term is an instance used by the one-time pad. |
 
 ## Building
 
