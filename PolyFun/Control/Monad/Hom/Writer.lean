@@ -17,9 +17,11 @@ This module gives `WriterT ω` its functorial action on PolyFun's bundled `Monad
 It is separate from `PolyFun.Control.Monad.Hom` so consumers of the base morphism API
 do not acquire Mathlib's Writer dependency unless they use it.
 
-Two more morphisms change the output rather than the base monad: `WriterT.mapOutputHom f` maps
-the accumulated output along a monoid hom `f`, and `WriterT.toStateTHom` reads an additive log
-as the amount added to a running total in `StateT`.
+Other morphisms change the output rather than the base monad. `WriterT.mapOutputHom f` maps the
+accumulated output along a monoid hom `f`. `WriterT.adaptHom f` maps it along any function that
+preserves `∅` and `++`, for writers that combine their output by `EmptyCollection` and `Append`,
+and `WriterT.mapListHom f` is its case for list logs, which have no `Monoid` instance.
+`WriterT.toStateTHom` reads an additive log as the amount added to a running total in `StateT`.
 -/
 
 @[expose] public section
@@ -45,6 +47,48 @@ def eraseHom (empty : ω) (append : ω → ω → ω) :
 @[simp] theorem eraseHom_apply (empty : ω) (append : ω → ω → ω)
     (x : WriterT ω m α) :
     eraseHom empty append x = Prod.fst <$> x.run := rfl
+
+section adapt
+
+variable {ω' : Type u} [EmptyCollection ω] [Append ω] [EmptyCollection ω'] [Append ω']
+
+/-- Mapping the accumulated output along `f` is a monad morphism between writers that combine
+their output by `EmptyCollection` and `Append`, when `f` sends `∅` to `∅` and `a ++ b` to
+`f a ++ f b`. Such writers need no `Monoid` instance, which `mapOutputHom` requires; list logs are
+the main case (`mapListHom`). -/
+def adaptHom (f : ω → ω') (hempty : f ∅ = ∅) (happend : ∀ a b, f (a ++ b) = f a ++ f b) :
+    WriterT ω m →ᵐ WriterT ω' m where
+  toFun _ x := WriterT.mk (Prod.map _root_.id f <$> x.run)
+  toFun_pure' a := by
+    apply WriterT.ext
+    change Prod.map _root_.id f <$> (pure (a, ∅) : m _) = pure (a, ∅)
+    simp [hempty]
+  toFun_bind' x g := by
+    apply WriterT.ext
+    change Prod.map _root_.id f <$> (x.run >>= fun p =>
+        (fun q => (q.1, p.2 ++ q.2)) <$> (g p.1).run) =
+      (Prod.map _root_.id f <$> x.run) >>= fun p =>
+        (fun q => (q.1, p.2 ++ q.2)) <$> (Prod.map _root_.id f <$> (g p.1).run)
+    simp [map_bind, bind_map_left, happend]
+
+@[simp] theorem run_adaptHom (f : ω → ω') (hempty : f ∅ = ∅)
+    (happend : ∀ a b, f (a ++ b) = f a ++ f b) (x : WriterT ω m α) :
+    (adaptHom f hempty happend x).run = Prod.map _root_.id f <$> x.run := rfl
+
+end adapt
+
+section mapList
+
+variable {A B : Type u}
+
+/-- Mapping every entry of a list log is a monad morphism of list writers. -/
+def mapListHom (f : A → B) : WriterT (List A) m →ᵐ WriterT (List B) m :=
+  adaptHom (List.map f) rfl fun _ _ => List.map_append
+
+@[simp] theorem run_mapListHom (f : A → B) (x : WriterT (List A) m α) :
+    (mapListHom f x).run = Prod.map _root_.id (List.map f) <$> x.run := rfl
+
+end mapList
 
 variable [Monoid ω]
 

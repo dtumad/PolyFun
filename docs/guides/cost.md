@@ -298,7 +298,9 @@ on reachable states needs a state type that excludes the unreachable ones.
   meter (`mapHom_liftM_withChargeW`, `run_liftM_mapTarget_withCharge`). Mapping a log along an
   additive hom `f` is charging by `f ∘ c` (`mapOutputHom_liftM_withChargeW`). The two writer
   morphisms behind these laws, `WriterT.mapOutputHom` and `WriterT.toStateTHom`, are in
-  `PolyFun/Control/Monad/Hom/Writer.lean`.
+  `PolyFun/Control/Monad/Hom/Writer.lean`. Logs without a `Monoid` instance, such as the list
+  traces of `Handler.withTraceAppend`, are mapped by `WriterT.adaptHom`, for any map that preserves
+  `∅` and `++`, and `WriterT.mapListHom f`, which maps each entry.
 - `h.withBudget c B` refuses any call that would overspend, and `h.withBudgetOr c B fallback`
   answers it with a fallback. On a program within budget neither intervenes
   (`run_liftM_withBudget_of_isChargeBound`, `run_liftM_withBudgetOr_of_isChargeBound`).
