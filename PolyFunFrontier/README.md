@@ -32,6 +32,17 @@ moves upstream by changing its import prefix. PolyFunFrontier does the same one 
 |---|---|
 | `PFunctor/Free/DecisionTree` | Boolean decision trees are the free programs of `monomial ι Bool`; evaluation is the fold that answers queries from the input, and depth is the total roll bound |
 | `PFunctor/Free/DecisionTree/LowerBound` | cslib-frontier's decision-tree lower bounds for free programs: a program computing the parity of `n` bits has no total roll bound below `n`, and the sensitivity and restricted-parity bounds |
+| `Realizability/MultiTape` | The `StepClass.multiTapePolyTime` representations are injective binary encodings. Frontier's deterministic polynomial-time functions supply its admissible maps, including pairing and both projections. |
+| `IPFunctor/Scoped/PolyTime` | Applying the scoped-term admissibility theorem to the multi-tape step class certifies a binary term on an encoded pair. The two-variable bitwise XOR term is used by the one-time pad. |
+| `PFunctor/Free/Realization` | A certificate combines deterministic local maps, primitive probabilistic handlers, sequential composition, and fair-bit sampling. `MachineRealization.ofCertificate` chooses one finite-control probabilistic machine whose output agrees with the handler fold and whose polynomial clock bounds every supported run on every input word. |
+
+Installing a handler can change how the same source branches. In the regression below, the source
+asks for a bit and asks again only on true. On the tape `[false, true, false, true]`, a handler
+that reads one bit per request returns false with three bits left. Installing a handler that
+reads two bits and returns the second makes the same source return true with an empty tape.
+`PPTProgram.substitute` transfers the derivation over the composite handler to the installed
+source. The test also certifies the two-read implementation over fair coins.
+[Handler substitution regressions](PolyFunFrontierTest/Realization.lean)
 
 ## Building
 
