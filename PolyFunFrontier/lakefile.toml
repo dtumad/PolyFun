@@ -27,8 +27,8 @@ path = ".."
 # and `scripts/bump.sh` moves all four together.
 [[require]]
 name = "cslib-frontier"
-git = "https://github.com/cslib-community/cslib-frontier"
-rev = "87063d8acdd04168e47c55701c7497de584af566"
+git = "https://github.com/dtumad/cslib-frontier"
+rev = "392c6eece2cb2aeb1ec4382a812b3fb9efb007a6"
 
 # Declared last, so these pins win over PolyFun's `v4.36.0` tags: Lake resolves the root's
 # requirements first, in reverse declaration order.
