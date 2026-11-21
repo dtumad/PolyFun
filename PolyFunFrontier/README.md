@@ -20,7 +20,7 @@ moves upstream by changing its import prefix. PolyFunFrontier does the same one 
   `PolyFunFrontier/PFunctor/Free/DecisionTree.lean` is the future
   `PolyFun/PFunctor/Free/DecisionTree.lean`.
 - Each module records the cslib-frontier modules it waits on, in a comment after `module`:
-  `-- frontier: CslibFrontier.Computability.DecisionTree.Parity`.
+  `-- frontier: CslibFrontier.Computability.DecisionTree.FreeM`.
 - When those modules reach CSLib, the module moves into `PolyFun/`: rename the file, replace
   `PolyFunFrontier.` by `PolyFun.` and `CslibFrontier.` by `Cslib.`, and leave a deprecated module
   in its place.
@@ -30,7 +30,7 @@ moves upstream by changing its import prefix. PolyFunFrontier does the same one 
 
 | Module | Content |
 |---|---|
-| `PFunctor/Free/DecisionTree` | Boolean decision trees are the free programs of `monomial ι Bool`; evaluation is the fold that answers queries from the input, and depth is the total roll bound |
+| `PFunctor/Free/DecisionTree` | PolyFun’s total roll bound is equivalent to a depth bound under cslib-frontier’s correspondence between Boolean decision trees and free programs |
 | `PFunctor/Free/DecisionTree/LowerBound` | cslib-frontier's decision-tree lower bounds for free programs: a program computing the parity of `n` bits has no total roll bound below `n`, and the sensitivity and restricted-parity bounds |
 | `Realizability/MultiTape` | The `StepClass.multiTapePolyTime` representations are injective binary encodings. Frontier's deterministic polynomial-time functions supply its admissible maps, including pairing and both projections. |
 | `IPFunctor/Scoped/PolyTime` | Every fixed binary expression built from Boolean truth tables denotes a polynomial-time map on two encoded words. The one-time pad uses pointwise XOR and a nested expression that reuses the key. |
