@@ -1,93 +1,54 @@
-name: Frontier
-
-# Builds PolyFunFrontier, the nested package that adds cslib-frontier (PolyFunFrontier/README.md).
-# It runs on cslib-frontier's toolchain and pins. Its CI is a separate workflow: a cslib-frontier change that breaks it never blocks PolyFun's own checks.
-# Make `Frontier` a required check only for pull requests that touch PolyFunFrontier/.
-
+name: VCVioFrontier cold Linux build
+run-name: VCVioFrontier cold Linux at ${{ inputs.revision }}
 on:
-  push:
-    branches: ["main"]
-    paths:
-      - "PolyFunFrontier/**"
-      - "PolyFun/**"
-      - "ToCslib/**"
-      - "lakefile.toml"
-      - "lake-manifest.json"
-      - "lean-toolchain"
-      - "scripts/PolyFunAxiomSweep.lean"
-      - "scripts/axiom_baseline.json"
-      - ".github/workflows/frontier.yml"
-  pull_request:
-    paths:
-      - "PolyFunFrontier/**"
-      - "PolyFun/**"
-      - "ToCslib/**"
-      - "lakefile.toml"
-      - "lake-manifest.json"
-      - "lean-toolchain"
-      - "scripts/PolyFunAxiomSweep.lean"
-      - "scripts/axiom_baseline.json"
-      - ".github/workflows/frontier.yml"
   workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+    inputs:
+      revision:
+        description: Published VCVio fork commit to build
+        required: true
+        type: string
 
 jobs:
   frontier:
-    name: Frontier
     runs-on: ubuntu-latest
     permissions:
       contents: read
     defaults:
       run:
-        working-directory: PolyFunFrontier
-
+        working-directory: VCVioFrontier
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-
-      # Dependencies only (Mathlib's oleans and the CSLib and cslib-frontier builds), keyed by the
-      # nested package's pins. Its own build and PolyFun's are small and rebuilt each run.
-      - name: Restore dependency cache
-        id: deps-cache
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
-          path: |
-            PolyFunFrontier/.lake/packages
-            !PolyFunFrontier/.lake/packages/**/*.setup.json
-          key: frontier-deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('PolyFunFrontier/lean-toolchain', 'PolyFunFrontier/lake-manifest.json') }}
-
-      - name: Set up Lean environment
-        uses: leanprover/lean-action@fe408643ea7367d8c0404a8be3975bb145f5fb64 # v1.7.0
+          repository: dtumad/VCVio
+          persist-credentials: false
+          ref: ${{ inputs.revision }}
+      - name: Verify the exact source revision
+        working-directory: .
+        env:
+          REVISION: ${{ inputs.revision }}
+        run: |
+          [[ "$REVISION" =~ ^[0-9a-f]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$REVISION"
+          printf '%s\n' "$REVISION"
+      - run: bash ../scripts/free-ci-disk-space.sh
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9
         with:
-          lake-package-directory: PolyFunFrontier
+          version: "0.13.6"
+          enable-cache: false
+      - uses: leanprover/lean-action@fe408643ea7367d8c0404a8be3975bb145f5fb64 # v1
+        with:
+          lake-package-directory: VCVioFrontier
           auto-config: false
           build: false
           test: false
           lint: false
           use-github-cache: false
           use-mathlib-cache: false
-
-      - name: Fetch Mathlib's cache
-        run: lake exe cache get
-
-      - name: Check the pins against cslib-frontier
-        run: python3 scripts/check-pins.py
-
-      - name: Build
-        run: lake build PolyFunFrontier PolyFunFrontierTest
-
-      - name: Enforce zero axiom and sorry debt
+      - run: lake exe cache get
+      - run: uv run --no-project --python 3.12 python scripts/check-pins.py
+      - run: lake build VCVioFrontier VCVioFrontierTest
+      - run: lake exe mk_all --lib VCVioFrontier --module --check
+      - name: Check axioms and sorry debt
         run: >-
-          lake exe polyfun-axiomsweep --root PolyFunFrontier
+          lake exe axiomsweep --root VCVioFrontier
           --baseline ../scripts/axiom_baseline.json --check
-
-      - name: Save dependency cache
-        if: success() && github.ref == 'refs/heads/main' && steps.deps-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: |
-            PolyFunFrontier/.lake/packages
-            !PolyFunFrontier/.lake/packages/**/*.setup.json
-          key: frontier-deps-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('PolyFunFrontier/lean-toolchain', 'PolyFunFrontier/lake-manifest.json') }}
