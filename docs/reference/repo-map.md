@@ -98,6 +98,8 @@ imports Mathlib's finite-sum API. Scaling remains in `IPFunctor/Free/Bound.lean`
 See the guide to
 [command substitution](../guides/ipfunctor.md#command-substitution-and-combined-budgets).
 
+CSLib provides replay of a successful partial free-program run, including preservation of a fixed state. PolyFun’s settled-handler API relates the same run to its path, output and writer charge.
+
 ## Conceptual layering
 
 Arrows mean “is used by”; they do not assert equivalence of the objects.

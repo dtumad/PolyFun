@@ -6,6 +6,7 @@ Authors: Devon Tuma
 
 module
 
+public import Cslib.Foundations.Data.PFunctor.Free.Partial
 public import PolyFun.PFunctor.Handler.Charge
 
 /-!
@@ -42,44 +43,6 @@ theorem exists_eq_some_of_liftM_liftBind_eq_some (p : Handler Option P) {a : P.A
     {r : P.B a → FreeM P α} {v : α} (hx : (FreeM.liftBind a r).liftM p = some v) :
     ∃ b, p a = some b ∧ (r b).liftM p = some v :=
   Option.bind_eq_some_iff.mp hx
-
-/-- **A settled program runs purely.** If `h` returns `p`'s answer purely wherever `p` answers,
-then a program that `p` settles at `v` runs through `h` as `pure v`. -/
-theorem liftM_eq_pure_of_liftM_eq_some {m : Type uB → Type v} [Monad m] [LawfulMonad m]
-    (p : Handler Option P) (h : Handler m P) (hp : ∀ a b, p a = some b → h a = pure b)
-    {x : FreeM P α} {v : α} (hx : x.liftM p = some v) : x.liftM h = pure v := by
-  induction x using FreeM.rec generalizing v with
-  | pure a =>
-    cases Option.some.inj hx
-    rfl
-  | liftBind a r ih =>
-    obtain ⟨b, hb, hr⟩ := exists_eq_some_of_liftM_liftBind_eq_some p hx
-    change h a >>= (fun b => (r b).liftM h) = pure v
-    rw [hp a b hb, LawfulMonad.pure_bind]
-    exact ih b hr
-
-/-- **Settled programs stay settled under extension.** If `q` answers as `p` wherever `p` answers,
-a program that `p` settles at `v` is settled by `q` at `v`. -/
-theorem liftM_eq_some_of_le (p q : Handler Option P) (hpq : ∀ a b, p a = some b → q a = some b)
-    {x : FreeM P α} {v : α} (hx : x.liftM p = some v) : x.liftM q = some v :=
-  liftM_eq_pure_of_liftM_eq_some p q hpq hx
-
-/-- **A settled program frames a stateful run.** If `h` returns `p`'s answer at the state `s`
-without changing it wherever `p` answers, then a program that `p` settles at `v` runs through `h`
-from `s` as `pure (v, s)`. -/
-theorem run_liftM_eq_pure_of_liftM_eq_some {m : Type uB → Type v} [Monad m] [LawfulMonad m]
-    {σ : Type uB} (p : Handler Option P) (h : Handler (StateT σ m) P) (s : σ)
-    (hp : ∀ a b, p a = some b → (h a).run s = pure (b, s))
-    {x : FreeM P α} {v : α} (hx : x.liftM p = some v) : (x.liftM h).run s = pure (v, s) := by
-  induction x using FreeM.rec generalizing v with
-  | pure a =>
-    cases Option.some.inj hx
-    rfl
-  | liftBind a r ih =>
-    obtain ⟨b, hb, hr⟩ := exists_eq_some_of_liftM_liftBind_eq_some p hx
-    change (h a >>= fun b => (r b).liftM h).run s = pure (v, s)
-    rw [StateT.run_bind, hp a b hb, LawfulMonad.pure_bind]
-    exact ih b hr
 
 /-- **The charge of a settled run.** Charging a partial handler in a writer, a program that it
 settles at `v` returns `v` and logs the charge of the path it follows. That path is the path of
