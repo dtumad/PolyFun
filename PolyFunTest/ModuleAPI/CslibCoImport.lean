@@ -8,9 +8,13 @@ module
 
 import Cslib.Foundations.Data.PFunctor.Basic
 import Cslib.Foundations.Data.PFunctor.Free.Fold
+import Cslib.Foundations.Data.PFunctor.Free.Spine
+import Cslib.Foundations.Data.PFunctor.Free.StateT
 import Cslib.Foundations.Data.PFunctor.Free.W
 import PolyFun.PFunctor.Basic
 import PolyFun.PFunctor.Free.Basic
+import PolyFun.PFunctor.Free.Cursor
+import PolyFun.PFunctor.Handler.Stateful.Combinators
 import ToCslib.Data.PFunctor.Free.Basic
 
 /-!
@@ -19,8 +23,9 @@ import ToCslib.Data.PFunctor.Free.Basic
 cslib's `PFunctor.Basic` owns the monomial abbreviations, `0`, `1`, `P + Q` and `P * Q`; its
 `Free.Fold` and `Free.W` own the fold `PFunctor.FreeM.foldFreeM` and the W-type equivalence
 `PFunctor.FreeM.equivWOfIsEmpty`. `PolyFun.PFunctor.Basic`, `PolyFun.PFunctor.Free.Basic` and
-`ToCslib.Data.PFunctor.Free.Basic` build on them without redeclaring any of these, so all six
-modules import together. Each example combines a lemma from cslib with one from PolyFun or
+`ToCslib.Data.PFunctor.Free.Basic` build on those modules. Cursor traces extend cslib's typed
+spines, and stateful handlers use its theorem about state representation. Each example
+combines a lemma from cslib with one from PolyFun or
 `ToCslib` through ordinary imports.
 -/
 
@@ -76,5 +81,11 @@ example {P : PFunctor.{uA, uB}} {Q : PFunctor.{uA₂, uB₂}} (lens : Lens P Q) 
         FreeM.toWOfIsEmpty ((rest (lens.toFunB a d)).mapLens lens) := by
   rw [FreeM.mapLens_liftBind]
   rfl
+
+/-- Continuing from a canonical spine with PolyFun's edge-counting API. -/
+example {P : PFunctor.{uA, uB}} {α : Type uα} {p r : P.FreeM α}
+    (path : FreeM.Cursor.Spine p r) :
+    (path.comp (.root r)).length = path.length := by
+  rw [FreeM.Cursor.Spine.comp_root]
 
 end PolyFunTest.ModuleAPI.CslibCoImport

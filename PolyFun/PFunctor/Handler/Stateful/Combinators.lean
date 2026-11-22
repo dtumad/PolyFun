@@ -6,6 +6,7 @@ Authors: Devon Tuma
 
 module
 
+import Cslib.Foundations.Data.PFunctor.Free.StateT
 public import PolyFun.PFunctor.Handler.Stateful
 public import PolyFun.PFunctor.Handler.Sum
 
@@ -51,11 +52,8 @@ variable {P : PFunctor.{uA, u}} {Q : PFunctor.{uA', u}}
 theorem run_map_eq_of_apply_map_eq [Monad m] [LawfulMonad m]
     (h₁ : Stateful m S₁ P) (h₂ : Stateful m S₂ P) (proj : S₁ → S₂)
     (hproj : ∀ a s, Prod.map _root_.id proj <$> (h₁ a).run s = (h₂ a).run (proj s)) {α : Type u} :
-    ∀ (x : FreeM P α) (s : S₁), Prod.map _root_.id proj <$> h₁.run x s = h₂.run x (proj s)
-  | .pure a, s => by simp
-  | .liftBind a k, s => by
-    rw [run_liftBind, run_liftBind, map_bind, ← hproj a s, bind_map_left]
-    exact bind_congr fun r => run_map_eq_of_apply_map_eq h₁ h₂ proj hproj (k r.1) r.2
+    ∀ (x : FreeM P α) (s : S₁), Prod.map _root_.id proj <$> h₁.run x s = h₂.run x (proj s) :=
+  FreeM.map_state_run_liftM h₁ h₂ proj hproj
 
 /-- The value-only form of `run_map_eq_of_apply_map_eq`. -/
 theorem fst_map_run_eq_of_apply_map_eq [Monad m] [LawfulMonad m]

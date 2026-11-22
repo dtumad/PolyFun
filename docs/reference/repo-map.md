@@ -166,7 +166,9 @@ declaration instead of declaring a local copy: `PolyFun.PFunctor.Basic`
 re-exports `Cslib.Foundations.Data.PFunctor.Basic`,
 `ToCslib.Data.PFunctor.Free.Basic` re-exports
 `Cslib.Foundations.Data.PFunctor.Free.Fold`, and `PolyFun.PFunctor.Free.Basic`
-re-exports `Cslib.Foundations.Data.PFunctor.Free.W`. `import Cslib` therefore
+re-exports `Cslib.Foundations.Data.PFunctor.Free.W`. Cursor traces use the typed spine from
+`Cslib.Foundations.Data.PFunctor.Free.Spine`. Stateful handlers specialize the representation
+theorem from `Cslib.Foundations.Data.PFunctor.Free.StateT`. `import Cslib` therefore
 elaborates together with `import PolyFun`, `import ToCslib` and
 `import ComplexityBackends`;
 [`CslibCoImport.lean`](../../PolyFunTest/ModuleAPI/CslibCoImport.lean) imports
