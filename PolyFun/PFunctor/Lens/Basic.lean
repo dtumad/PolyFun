@@ -64,20 +64,6 @@ theorem ext_heq {P : PFunctor.{uA₁, uB₁}} {Q : PFunctor.{uA₂, uB₂}} (l�
   cases l₂
   grind
 
-/-- The identity lens -/
-@[reducible]
-protected def id (P : PFunctor.{uA, uB}) : Lens P P where
-  toFunA := fun a => a
-  toFunB := fun _ b => b
-
-/-- Composition of lenses -/
-def comp {P : PFunctor.{uA₁, uB₁}} {Q : PFunctor.{uA₂, uB₂}} {R : PFunctor.{uA₃, uB₃}}
-    (l : Lens Q R) (l' : Lens P Q) : Lens P R where
-  toFunA := l.toFunA ∘ l'.toFunA
-  toFunB := fun i => (l'.toFunB i) ∘ l.toFunB (l'.toFunA i)
-
-@[inherit_doc] scoped[PFunctor] infixl:75 " ∘ₗ " => PFunctor.Lens.comp
-
 /-- Apply a polynomial lens to an element of the source polynomial's
 extension. The position is sent forward and the payload is pulled back along
 the lens's direction map. -/
@@ -110,18 +96,6 @@ theorem ext_mapObj {P : PFunctor.{uA₁, uB₁}} {Q : PFunctor.{uA₂, uB₂}} (
   have hraw : l₁.toFunB a ≍ l₂.toFunB a :=
     (Sigma.ext_iff.mp (h a)).2
   grind
-
-@[simp]
-theorem id_comp {P : PFunctor.{uA₁, uB₁}} {Q : PFunctor.{uA₂, uB₂}} (f : Lens P Q) :
-    (Lens.id Q) ∘ₗ f = f := rfl
-
-@[simp]
-theorem comp_id {P : PFunctor.{uA₁, uB₁}} {Q : PFunctor.{uA₂, uB₂}} (f : Lens P Q) :
-    f ∘ₗ (Lens.id P) = f := rfl
-
-theorem comp_assoc {P : PFunctor.{uA₁, uB₁}} {Q : PFunctor.{uA₂, uB₂}} {R : PFunctor.{uA₃, uB₃}}
-    {S : PFunctor.{uA₄, uB₄}} (l : Lens R S) (l' : Lens Q R) (l'' : Lens P Q) :
-    (l ∘ₗ l') ∘ₗ l'' = l ∘ₗ (l' ∘ₗ l'') := rfl
 
 /-- An equivalence between two polynomial functors `P` and `Q`, using lenses.
     This corresponds to an isomorphism in the category `PFunctor` with `Lens` morphisms. -/

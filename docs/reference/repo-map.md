@@ -98,6 +98,8 @@ imports Mathlib's finite-sum API. Scaling remains in `IPFunctor/Free/Bound.lean`
 See the guide to
 [command substitution](../guides/ipfunctor.md#command-substitution-and-combined-budgets).
 
+The underlying polynomial lens, its composition laws, and the action on free programs come from CSLib. PolyFun bundles that action as a monad homomorphism and supplies the lens constructions for compound interfaces.
+
 ## Conceptual layering
 
 Arrows mean “is used by”; they do not assert equivalence of the objects.

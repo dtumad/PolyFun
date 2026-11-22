@@ -5,6 +5,7 @@ Authors: Quang Dao
 -/
 module
 
+public import Cslib.Foundations.Data.PFunctor.Lens
 public import Cslib.Foundations.Data.PFunctor.Basic
 public import Mathlib.Data.PFunctor.Multivariate.Basic
 public import Mathlib.Util.Notation3
@@ -492,20 +493,6 @@ lemma equivB_symm_equivB (e : P ≃ₚ Q) (a : Q.A)
 @[deprecated (since := "2026-10-19")] alias reverse_equivB_roundtrip := equivB_symm_equivB
 
 end Equiv
-
-/-- A **lens** between two polynomial functors `P` and `Q` is a pair of a function:
-- `toFunA : P.A → Q.A`
-- `toFunB : ∀ a, Q.B (toFunA a) → P.B a` -/
-structure Lens (P : PFunctor.{uA₁, uB₁}) (Q : PFunctor.{uA₂, uB₂}) where
-  /-- The forward map on positions, sending each position of `P` to a position of `Q`. -/
-  toFunA : P.A → Q.A
-  /-- The backward map on directions, pulling a direction of `Q` at `toFunA a` back to a
-  direction of `P` at `a`. -/
-  toFunB : ∀ a, Q.B (toFunA a) → P.B a
-
-/-- Infix notation for constructing a lens `toFunA ⇆ toFunB`; activate it with
-`open scoped PFunctor`. -/
-scoped infixr:25 " ⇆ " => Lens.mk
 
 /-- A chart between two polynomial functors `P` and `Q` is a pair of a function:
 - `toFunA : P.A → Q.A`

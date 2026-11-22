@@ -5,6 +5,7 @@ Authors: Quang Dao, Devon Tuma
 -/
 module
 
+public import Cslib.Foundations.Data.PFunctor.Free.Lens
 public import Cslib.Foundations.Data.PFunctor.Free.W
 public import PolyFun.Control.Monad.Hom
 public import PolyFun.PFunctor.Basic
@@ -131,64 +132,7 @@ section mapLens
 
 variable {Q : PFunctor.{uA₂, uB₂}} {R : PFunctor.{uA₃, uB₃}}
 
-/-- Transport a free polynomial tree along a polynomial lens.
-
-The source polynomial `P` is the abstract/control interface. The target
-polynomial `Q` is the concrete/runtime interface. At each `P`-node, the lens
-chooses a `Q`-position by `toFunA`; when runtime supplies a `Q`-direction,
-`toFunB` maps it back to the corresponding `P`-direction selecting the
-control continuation. -/
-@[implicit_reducible]
-protected def mapLens (l : Lens P Q) : FreeM P α → FreeM Q α
-  | .pure x => .pure x
-  | .liftBind a rest => .liftBind (l.toFunA a) fun d =>
-      (rest (l.toFunB a d)).mapLens l
-
-@[simp]
-theorem mapLens_pure (l : Lens P Q) (x : α) :
-    (pure x : FreeM P α).mapLens l = FreeM.pure x :=
-  rfl
-
-theorem mapLens_liftBind (l : Lens P Q) (a : P.A) (rest : P.B a → FreeM P α) :
-    (FreeM.liftBind a rest).mapLens l =
-      FreeM.liftBind (l.toFunA a) (fun d ↦ (rest (l.toFunB a d)).mapLens l) :=
-  rfl
-
-@[simp]
-theorem mapLens_id (x : FreeM P α) :
-    x.mapLens (Lens.id P) = x := by
-  induction x with
-  | pure _ => rfl
-  | lift_bind a rest ih => exact congrArg (FreeM.liftBind a) (funext ih)
-
-@[simp]
-theorem mapLens_mapLens (l₂ : Lens Q R) (l₁ : Lens P Q) (x : FreeM P α) :
-    (x.mapLens l₁).mapLens l₂ = x.mapLens (l₂ ∘ₗ l₁) := by
-  induction x with
-  | pure _ => rfl
-  | lift_bind a rest ih =>
-      exact congrArg (FreeM.liftBind (l₂.toFunA (l₁.toFunA a))) (funext fun d => ih _)
-
 @[deprecated (since := "2026-10-19")] alias mapLens_comp := mapLens_mapLens
-
-theorem mapLens_bind (l : Lens P Q) (x : FreeM P α) (f : α → FreeM P β) :
-    (FreeM.bind x f).mapLens l =
-      FreeM.bind (x.mapLens l) (fun a => (f a).mapLens l) := by
-  induction x with
-  | pure _ => rfl
-  | lift_bind a rest ih => exact congrArg (FreeM.liftBind (l.toFunA a)) (funext fun d => ih _)
-
-@[simp]
-theorem mapLens_bind' (l : Lens P Q) (x : FreeM P α) (f : α → FreeM P β) :
-    (x >>= f).mapLens l = x.mapLens l >>= fun a => (f a).mapLens l := mapLens_bind l x f
-
-/-- Relabelling a program along a lens commutes with mapping its results. -/
-@[simp]
-theorem mapLens_map (l : Lens P Q) (f : α → β) (x : FreeM P α) :
-    (f <$> x).mapLens l = f <$> x.mapLens l := by
-  induction x with
-  | pure _ => rfl
-  | lift_bind a rest ih => exact congrArg (FreeM.liftBind (l.toFunA a)) (funext fun d => ih _)
 
 /-- `FreeM.mapLens` as a monad homomorphism. -/
 protected def mapLensHom (l : Lens P Q) : FreeM P →ᵐ FreeM Q where
@@ -273,19 +217,6 @@ a monad morphism `φ` is the fold of the post-composed handler. -/
 theorem liftMHom_comp (φ : m →ᵐ n) :
     φ ∘ᵐ FreeM.liftMHom s = FreeM.liftMHom (fun a => φ (s a)) :=
   MonadHom.ext' fun β x => by simp
-
-/-- Interpreting a relabelled program pulls the handler back along the lens: the handler
-answers at the relabelled position and the lens's backward map translates the direction. -/
-theorem liftM_mapLens {Q : PFunctor.{uA₂, uB}} (l : Lens P Q) (h : (a : Q.A) → m (Q.B a)) :
-    ∀ x : FreeM P α, (x.mapLens l).liftM h = x.liftM (Handler.comapLens h l)
-  | .pure _ => rfl
-  | .liftBind a rest => by
-    rw [FreeM.mapLens_liftBind]
-    change (h (l.toFunA a) >>= fun d => ((rest (l.toFunB a d)).mapLens l).liftM h) =
-      (l.toFunB a <$> h (l.toFunA a)) >>= fun d =>
-        (rest d).liftM (Handler.comapLens h l)
-    rw [bind_map_left]
-    exact bind_congr fun d => liftM_mapLens l h (rest (l.toFunB a d))
 
 /-- Bundled form of `liftM_mapLens`: folding after relabelling along a lens is folding with the
 handler pulled back along the lens. -/
