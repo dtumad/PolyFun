@@ -92,8 +92,8 @@ example (x : FreeM counter Nat) (s : Nat) :
 /-- The value-preserving handler over `counter` that echoes the count without changing it
 returns every program's value unchanged. -/
 example (x : FreeM counter Nat) (s : Nat) :
-    Prod.fst <$> (Handler.Stateful.lift (S := Nat) (Handler.id counter) : Handler.Stateful (FreeM counter)
-      Nat counter).run x s = x :=
+    Prod.fst <$> (Handler.Stateful.lift (S := Nat) (Handler.id counter) :
+      Handler.Stateful (FreeM counter) Nat counter).run x s = x :=
   Handler.Stateful.fst_map_run_eq_self _ (fun a s => by simp [Handler.Stateful.lift]) x s
 
 end PolyFunTest.ModuleAPI.StatefulCombinators

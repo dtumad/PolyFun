@@ -226,7 +226,8 @@ def oneHandler (_ : Unit) : PFunctor.Handler (FreeM Interface) Interface where
   toFun a := FreeM.lift a
 
 example (a : Interface.A) :
-    PFunctor.Handler.sigma oneHandler (⟨(), a⟩ : (PFunctor.sigma oneInterface).A) = oneHandler () a :=
+    PFunctor.Handler.sigma oneHandler (⟨(), a⟩ : (PFunctor.sigma oneInterface).A) =
+      oneHandler () a :=
   rfl
 
 /-! The public producers preserve all advertised universe separation. -/
