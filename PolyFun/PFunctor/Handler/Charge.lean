@@ -199,7 +199,7 @@ theorem run_withChargeW [Functor m] (h : Handler m P) (c : P.A → ω) (a : P.A)
 /-- Charging in a writer is writer tracing of the charge, logged before each call. -/
 theorem withChargeW_eq_withTraceBefore [Monad m] [LawfulMonad m] [AddMonoid ω] (h : Handler m P)
     (c : P.A → ω) : h.withChargeW c = h.withTraceBefore fun a => Multiplicative.ofAdd (c a) := by
-  funext a
+  ext a
   apply WriterT.ext
   simp [withTraceBefore_apply, run_withChargeW, MonadWriter.tell]
 

@@ -56,8 +56,8 @@ def toFreeLens {P : PFunctor.{uA, u}} {Q : PFunctor.{uA', u'}}
 
 /-- Decode a lens into a free polynomial as a free handler. -/
 def ofFreeLens {P : PFunctor.{uA, u}} {Q : PFunctor.{uA', u'}}
-    (lens : Lens P (FreeP Q)) : Handler (FreeM Q) P :=
-  fun operation =>
+    (lens : Lens P (FreeP Q)) : Handler (FreeM Q) P where
+  toFun operation :=
     FreeP.decode (.mk (lens.toFunA operation) (lens.toFunB operation))
 
 /-- Free handlers are structurally equivalent to lenses into the free
@@ -68,7 +68,7 @@ def equivFreeLens {P : PFunctor.{uA, u}} {Q : PFunctor.{uA', u'}} :
   toFun := toFreeLens
   invFun := ofFreeLens
   left_inv f := by
-    funext operation
+    ext operation : 1
     exact FreeP.decode_encode (f operation)
   right_inv lens := by
     apply Lens.ext_mapObj

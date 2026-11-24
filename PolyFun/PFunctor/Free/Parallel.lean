@@ -697,7 +697,7 @@ namespace Handler
 @[simp] theorem parallel_id
     (P : PFunctor.{uA₁, uB}) (Q : PFunctor.{uA₂, uB}) :
     parallel (Handler.id P) (Handler.id Q) = Handler.id (P ∥ Q) := by
-  funext operation
+  ext operation
   cases operation <;> rfl
 
 end Handler

@@ -117,7 +117,7 @@ theorem run_reindex [LawfulMonad m]
 @[simp]
 theorem reindex_id [LawfulMonad m] (h : Stateful m S P) :
     h.reindex (Handler.id P) = h := by
-  funext query state
+  ext query state
   change h.run (FreeM.lift query) state = (h query).run state
   exact run_lift h query state
 
@@ -128,7 +128,7 @@ theorem reindex_comp [LawfulMonad m]
     (first : Handler (FreeM Q) P)
     (h : Stateful m S R) :
     (h.reindex second).reindex first = h.reindex (second.comp first) := by
-  funext query state
+  ext query state
   exact run_reindex second h (first query) state
 
 end Stateful

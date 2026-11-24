@@ -234,7 +234,8 @@ variable [Monad m]
 state remains private; any ambient capabilities are exactly those of the explicit monad `m`. -/
 @[expose] def handlers (diagram : HandledDiagram m N Δ result) (environment : N) :
     (node : N) → Handler (StateT Unit m) ((diagram.network environment).effect node) :=
-  fun node operation _ => (fun response => (response, ())) <$> diagram.handler node operation
+  fun node => ⟨fun operation _ => (fun response => (response, ())) <$>
+    diagram.handler node operation⟩
 
 /-- Execute the actual token runner and read the chosen environment's terminal outcome. -/
 @[expose] def tokenObservation [DecidableEq N] (diagram : HandledDiagram m N Δ result)
