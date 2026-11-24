@@ -96,6 +96,6 @@ example (R : Responder Nat Q) (program : FreeM Q Nat) (state : Nat) :
 
 /-- Query positions may live in a higher universe than directions and state. -/
 example : Handler.Stateful Option Nat ((Type 0) y^ Nat) :=
-  fun _ state => some (state, state + 1)
+  ⟨fun _ state => some (state, state + 1)⟩
 
 end PFunctor.Handler.Stateful.Examples

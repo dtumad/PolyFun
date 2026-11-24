@@ -57,7 +57,8 @@ def coinTree : ITree Coin ℕ :=
 
 /-- Answer every query with `b`. -/
 def answer (b : Bool) : PFunctor.Handler Id (Coin + PFunctor.y) where
-  toFun| .inl _ => b
+  toFun
+  | .inl _ => b
   | .inr _ => PUnit.unit
 
 /-- info: [none, some 7, some 11] -/

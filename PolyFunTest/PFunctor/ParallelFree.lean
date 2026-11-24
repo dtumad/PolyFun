@@ -288,13 +288,13 @@ theorem handler_parallel_comp_fails :
       Handler.parallel (secondLeft.comp firstLeft)
         (secondRight.comp firstRight) := by
   intro equality
-  cases congrArg rootOperation (congrFun equality (ParallelChoice.both false false))
+  cases congrArg rootOperation (Handler.congr_fun equality (ParallelChoice.both false false))
 
 /-- `Handler.parallelSeq` sequences a joint request left first, and its log records that order. -/
 example :
     (Handler.parallelSeq (m := StateM (List String)) (P := P) (Q := Q)
-      (fun b => do modify (· ++ ["left"]); pure (!b))
-      (fun _ => do modify (· ++ ["right"]); pure 7) (.both true PUnit.unit)).run [] =
+      ⟨fun b => do modify (· ++ ["left"]); pure (!b)⟩
+      ⟨fun _ => do modify (· ++ ["right"]); pure 7⟩ (.both true PUnit.unit)).run [] =
       ((false, 7), ["left", "right"]) := rfl
 
 end PFunctor.ParallelFreeCanary

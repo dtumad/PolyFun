@@ -93,6 +93,6 @@ example : ((twoRequests.mapLens collapse).liftM tick).run 0 = ((0, 101), 2) := r
 /-- The same run, through the pulled-back handler. -/
 example : ((twoRequests.mapLens collapse).liftM tick).run 0 =
     (twoRequests.liftM (tick.comapLens collapse)).run 0 := by
-  rw [FreeM.liftM_mapLens]
+  rw [Handler.liftM_mapLens]
 
 end PolyFunTest.ModuleAPI.HandlerLens

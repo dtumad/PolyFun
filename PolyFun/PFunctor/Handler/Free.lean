@@ -40,6 +40,8 @@ namespace Handler
 def id (P : PFunctor.{uA, u}) : Handler (FreeM P) P where
   toFun a := FreeM.lift a
 
+@[simp] theorem id_apply (P : PFunctor.{uA, u}) (a : P.A) : Handler.id P a = FreeM.lift a := rfl
+
 /-- Regard a polynomial lens as the one-operation free handler that issues
 the mapped operation and translates its answer through the lens. -/
 def ofLens {P : PFunctor.{uA, u}} {Q : PFunctor.{uA', u'}}

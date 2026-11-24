@@ -118,7 +118,7 @@ def evalAtZero : Handler (StateT Bool Id) AtZero where
   toFun f := StateT.mk fun s => (f 0, s)
 
 example : ((FreeM.lift (P := AtZero) (· + 1)).liftM evalAtZero).run true = pure (1, true) :=
-  FreeM.run_liftM_eq_pure_of_liftM_eq_some (fun f => some (f 0) : Handler Option AtZero) evalAtZero
+  FreeM.run_liftM_eq_pure_of_liftM_eq_some (⟨fun f => some (f 0)⟩ : Handler Option AtZero) evalAtZero
     true
     (fun f b h => by cases h; rfl) rfl
 
