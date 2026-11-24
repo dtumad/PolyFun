@@ -80,7 +80,7 @@ def flip (b : Bool) : PFunctor.Handler Id Coin where
   Id.run ((ITree.toDynComputation.run 2 coinTree).liftM (ITree.withSilentSteps (flip false)))]
 
 example (b : Bool) : ITree.withSilentSteps (flip b) = answer b := by
-  funext operation
+  ext operation : 1
   cases operation <;> rfl
 
 end ITree.MachineExamples

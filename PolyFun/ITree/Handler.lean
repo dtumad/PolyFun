@@ -6,6 +6,7 @@ Authors: Quang Dao
 module
 
 public import PolyFun.ITree.Basic
+public import PolyFun.PFunctor.Handler
 public import PolyFun.PFunctor.Lens.Basic
 
 /-! # Event handlers

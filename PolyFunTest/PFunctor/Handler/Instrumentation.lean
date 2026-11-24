@@ -167,7 +167,7 @@ lemma expectedInstrumentedHandler_false : expectedInstrumentedHandler false =
 
 lemma instrumentedHandler_eq_expected :
     instrumentedHandler = expectedInstrumentedHandler := by
-  funext operation
+  ext operation : 1
   cases operation
   · exact instrumentedHandler_false
   · exact instrumentedHandler_true

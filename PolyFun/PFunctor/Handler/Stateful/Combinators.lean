@@ -151,7 +151,7 @@ theorem parallel_inr_run [Functor m] (f : Stateful m S P) (g : Stateful m T Q)
 @[deprecated sum +typeChanged (since := "2026-10-19")]
 theorem parallel_eq_sum [Functor m] (f : Stateful m S P) (g : Stateful m T Q) :
     parallel f g = sum f g := by
-  funext x
+  ext x : 1
   cases x <;> rfl
 
 /-- Run an indexed family of stateful handlers on the indexed sum, each member on its own

@@ -107,6 +107,13 @@ theorem comp_ofLens {m : Type u → Type v} [Monad m] [LawfulMonad m] {P : PFunc
   ext a
   exact bind_pure_comp _ _
 
+/-- Interpreting a program relabelled along a lens interprets the original program through the
+handler pulled back along the lens: `FreeM.liftM_mapLens` at a `Handler`. -/
+theorem liftM_mapLens {m : Type u → Type v} [Monad m] [LawfulMonad m] {P : PFunctor.{uA, u}}
+    {Q : PFunctor.{uA', u}} (h : Handler m Q) (l : Lens P Q) {α : Type u} (x : FreeM P α) :
+    (x.mapLens l).liftM h = x.liftM (h.comapLens l) :=
+  FreeM.liftM_mapLens l h x
+
 /-- Bundled form of `liftM_ofLens`: the fold of the one-operation handler of a lens is
 `FreeM.mapLensHom`. -/
 theorem liftMHom_ofLens {P : PFunctor.{uA, u}} {Q : PFunctor.{uA', u'}} (l : Lens P Q) :
