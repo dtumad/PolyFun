@@ -447,7 +447,8 @@ theorem evalDisplayed_substitute
           ((Display.sigma inputDisplay').transport_trans
             ((codDisplay b).direction a c)
             (FreeM.liftM_comp (implementation b a) first second)
-            (congrArg (fun k : PFunctor.Handler _ _ => (implementation b a).liftM k) childEq) _).symm
+            (congrArg (fun k : PFunctor.Handler _ _ => (implementation b a).liftM k)
+              childEq) _).symm
         _ = (Display.sigma inputDisplay').transport
               ((codDisplay b).direction a c)
               (congrArg (fun k : PFunctor.Handler _ _ => (implementation b a).liftM k) childEq)
