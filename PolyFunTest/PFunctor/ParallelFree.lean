@@ -248,16 +248,20 @@ theorem lensMapComp
 
 abbrev Step : PFunctor.{0, 0} := ⟨Bool, fun _ => PUnit⟩
 
-def firstLeft : Handler (FreeM Step) Step := fun _ =>
-  FreeM.liftBind false fun _ => FreeM.liftBind true FreeM.pure
+def firstLeft : Handler (FreeM Step) Step where
+  toFun _ :=
+    FreeM.liftBind false fun _ => FreeM.liftBind true FreeM.pure
 
-def firstRight : Handler (FreeM Step) Step := fun _ => FreeM.lift false
+def firstRight : Handler (FreeM Step) Step where
+  toFun _ := FreeM.lift false
 
-def secondLeft : Handler (FreeM Step) Step
+def secondLeft : Handler (FreeM Step) Step where
+  toFun
   | false => FreeM.pure PUnit.unit
   | true => FreeM.lift true
 
-def secondRight : Handler (FreeM Step) Step := fun _ => FreeM.lift false
+def secondRight : Handler (FreeM Step) Step where
+  toFun _ := FreeM.lift false
 
 def rootOperation {E : Type} : FreeM (Step ∥ Step) E →
     Option (ParallelChoice Bool Bool)

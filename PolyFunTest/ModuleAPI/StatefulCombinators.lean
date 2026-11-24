@@ -30,12 +30,14 @@ abbrev counter : PFunctor.{0, 0} := ⟨Unit, fun _ => Nat⟩
 abbrev flag : PFunctor.{0, 0} := ⟨Unit, fun _ => Bool⟩
 
 /-- Answer with the count, then increment it. -/
-def tick : Handler.Stateful Id Nat counter := fun _ =>
-  (modifyGet fun n : Nat => (n, n + 1) : StateT Nat Id Nat)
+def tick : Handler.Stateful Id Nat counter where
+  toFun _ :=
+    (modifyGet fun n : Nat => (n, n + 1) : StateT Nat Id Nat)
 
 /-- Answer with the flag, then clear it. -/
-def take : Handler.Stateful Id Bool flag := fun _ =>
-  (modifyGet fun b : Bool => (b, false) : StateT Bool Id Bool)
+def take : Handler.Stateful Id Bool flag where
+  toFun _ :=
+    (modifyGet fun b : Bool => (b, false) : StateT Bool Id Bool)
 
 /-- Two counter requests and one flag request against the sum interface. -/
 def program : FreeM (counter + flag) (Nat × Nat × Bool) := do
@@ -65,16 +67,18 @@ example : Id.run ((Handler.Stateful.fixSnd logged []).run (FreeM.lift (P := coun
     (2, 3) := rfl
 
 /-- `flatten` reassociates a handler over a stateful base into one product state. -/
-def nested : Handler.Stateful (StateT Bool Id) Nat counter := fun _ =>
-  StateT.mk fun n => (modifyGet fun b : Bool => ((n, n + 1), !b) : StateT Bool Id (Nat × Nat))
+def nested : Handler.Stateful (StateT Bool Id) Nat counter where
+  toFun _ :=
+    StateT.mk fun n => (modifyGet fun b : Bool => ((n, n + 1), !b) : StateT Bool Id (Nat × Nat))
 
 example : Id.run ((Handler.Stateful.flatten nested).run
     (FreeM.lift (P := counter) () >>= fun _ => FreeM.lift ()) (0, false)) =
     (1, (2, false)) := rfl
 
 /-- `mapBase` interprets the base free monad through an outer handler. -/
-def viaFlag : Handler.Stateful (FreeM flag) Nat counter := fun _ =>
-  StateT.mk fun n => (fun b => (if b then n else 0, n + 1)) <$> FreeM.lift (P := flag) ()
+def viaFlag : Handler.Stateful (FreeM flag) Nat counter where
+  toFun _ :=
+    StateT.mk fun n => (fun b => (if b then n else 0, n + 1)) <$> FreeM.lift (P := flag) ()
 
 example : Id.run (((Handler.Stateful.mapBase take viaFlag).run
     (FreeM.lift (P := counter) () >>= fun _ => FreeM.lift ()) 4).run true) =

@@ -54,8 +54,8 @@ variable {I₁ : PFunctor.{uI₁, u}} {I₂ : PFunctor.{uI₂, u}}
 /-! ### Transport along state equivalences -/
 
 /-- Transport a stateful handler along an equivalence of states. -/
-def stateCongr [Functor m] (e : S ≃ T) (h : Stateful m S E) : Stateful m T E :=
-  fun a => StateT.mk fun t => Prod.map _root_.id e <$> (h a).run (e.symm t)
+def stateCongr [Functor m] (e : S ≃ T) (h : Stateful m S E) : Stateful m T E where
+  toFun a := StateT.mk fun t => Prod.map _root_.id e <$> (h a).run (e.symm t)
 
 @[simp] theorem stateCongr_apply_run [Functor m] (e : S ≃ T) (h : Stateful m S E) (a : E.A)
     (t : T) : (stateCongr e h a).run t = Prod.map _root_.id e <$> (h a).run (e.symm t) := rfl
@@ -155,8 +155,8 @@ theorem reindex_eq_link [Monad m] [LawfulMonad m] (impl : Handler (FreeM M) E)
 
 /-- Relabel the imports of a package along a lens: each answer program is transported by
 `FreeM.mapLens`. -/
-def mapLens (l : Lens I J) (h : Stateful (FreeM I) S E) : Stateful (FreeM J) S E :=
-  fun a => StateT.mk fun s => ((h a).run s).mapLens l
+def mapLens (l : Lens I J) (h : Stateful (FreeM I) S E) : Stateful (FreeM J) S E where
+  toFun a := StateT.mk fun s => ((h a).run s).mapLens l
 
 @[simp] theorem mapLens_apply_run (l : Lens I J) (h : Stateful (FreeM I) S E) (a : E.A)
     (s : S) : (h.mapLens l a).run s = ((h a).run s).mapLens l := rfl

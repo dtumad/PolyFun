@@ -568,7 +568,8 @@ before the right action; this is an explicit interpretation order, not parallel 
 assertion that the component effects commute. -/
 def parallelSeq {m : Type uB → Type uE} [Monad m]
     {P : PFunctor.{uA₁, uB}} {Q : PFunctor.{uA₂, uB}}
-    (left : Handler m P) (right : Handler m Q) : Handler m (P ∥ Q)
+    (left : Handler m P) (right : Handler m Q) : Handler m (P ∥ Q) where
+  toFun
   | .left operation => left operation
   | .right operation => right operation
   | .both first second => do
@@ -598,7 +599,8 @@ def parallel
     {R : PFunctor.{uA₃, uB}} {V : PFunctor.{uA₄, uB}}
     (leftHandler : Handler (FreeM R) P)
     (rightHandler : Handler (FreeM V) Q) :
-    Handler (FreeM (R ∥ V)) (P ∥ Q)
+    Handler (FreeM (R ∥ V)) (P ∥ Q) where
+  toFun
   | .left a => FreeM.left (Q := V) (leftHandler a)
   | .right b => FreeM.right (P := R) (rightHandler b)
   | .both a b => FreeM.parallel (leftHandler a) (rightHandler b)

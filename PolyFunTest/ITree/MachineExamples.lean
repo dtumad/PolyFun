@@ -56,8 +56,8 @@ def coinTree : ITree Coin ℕ :=
   ITree.step (ITree.query () fun b => ITree.pure (if b then 7 else 11))
 
 /-- Answer every query with `b`. -/
-def answer (b : Bool) : PFunctor.Handler Id (Coin + PFunctor.y) := fun
-  | .inl _ => b
+def answer (b : Bool) : PFunctor.Handler Id (Coin + PFunctor.y) where
+  toFun| .inl _ => b
   | .inr _ => PUnit.unit
 
 /-- info: [none, some 7, some 11] -/
@@ -70,7 +70,8 @@ def answer (b : Bool) : PFunctor.Handler Id (Coin + PFunctor.y) := fun
 silent step still consumes a unit of fuel. -/
 
 /-- Answer every coin query with `b`, with no case for silent steps. -/
-def flip (b : Bool) : PFunctor.Handler Id Coin := fun _ => b
+def flip (b : Bool) : PFunctor.Handler Id Coin where
+  toFun _ := b
 
 /-- info: [none, some 7, some 11] -/
 #guard_msgs in

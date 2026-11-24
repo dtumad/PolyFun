@@ -49,8 +49,8 @@ variable {R : PFunctor.{uA'', u}}
 
 /-- Lift a stateless monadic handler into a stateful handler that preserves the
 state. -/
-def lift (h : Handler m P) : Stateful m S P :=
-  fun query => StateT.lift (h query)
+def lift (h : Handler m P) : Stateful m S P where
+  toFun query := StateT.lift (h query)
 
 /-- Interpret a finite free program through a stateful handler from an explicit
 initial state. -/
@@ -94,8 +94,8 @@ theorem run_bind [LawfulMonad m] (h : Stateful m S P)
 /-- Reindex an effectful stateful handler contravariantly along a free handler.
 Each source query runs its finite target program against `h`. -/
 def reindex (implementation : Handler (FreeM Q) P)
-    (h : Stateful m S Q) : Stateful m S P :=
-  fun query state => h.run (implementation query) state
+    (h : Stateful m S Q) : Stateful m S P where
+  toFun query state := h.run (implementation query) state
 
 @[simp]
 theorem reindex_apply (implementation : Handler (FreeM Q) P)

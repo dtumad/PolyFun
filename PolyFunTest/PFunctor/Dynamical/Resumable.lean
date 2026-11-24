@@ -32,7 +32,8 @@ abbrev counter : DynComputation signature Nat Nat := DynComputation.ofStep
 def decrement (n : Nat) : Fin (n + 1) := ⟨n - 1, by omega⟩
 
 /-- Count actual handler invocations independently of the machine state. -/
-def counting : Handler (StateM Nat) signature := fun n => do
+def counting : Handler (StateM Nat) signature where
+  toFun n := do
   modify (· + 1)
   return decrement n
 

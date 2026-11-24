@@ -77,8 +77,8 @@ def collapse : Lens pair counter :=
   (fun _ => ()) ⇆ fun b n => if b then n else n + 100
 
 /-- A counter in the state monad: answer with the count, then increment it. -/
-def tick : Handler (StateM Nat) counter :=
-  fun _ => modifyGet fun n => (n, n + 1)
+def tick : Handler (StateM Nat) counter where
+  toFun _ := modifyGet fun n => (n, n + 1)
 
 /-- Ask `true`, then `false`, and return both answers in order. -/
 def twoRequests : FreeM pair (Nat × Nat) :=

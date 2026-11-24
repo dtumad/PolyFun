@@ -87,7 +87,8 @@ variable {P : PFunctor.{uA, u}} {ε : Type u} {m : Type u → Type v}
 
 /-- Expose the core exception transformer's result as the interface's answer. -/
 @[expose] def exceptAnswers (handler : Handler (ExceptT ε m) P) :
-    Handler m (P.withExcept ε) := fun a => (handler a).run
+    Handler m (P.withExcept ε) where
+  toFun a := (handler a).run
 
 end Handler
 

@@ -26,8 +26,9 @@ open PFunctor Handler
 abbrev Key : PFunctor := ⟨Bool, fun _ => Bool⟩
 
 /-- Each state answers its own key with the other Boolean. -/
-def partialAnswer (state : Bool) : Handler Option Key := fun key =>
-  if key = state then some (!state) else none
+def partialAnswer (state : Bool) : Handler Option Key where
+  toFun key :=
+    if key = state then some (!state) else none
 
 /-- Query the first answer. -/
 def adaptive : FreeM Key Bool := do
